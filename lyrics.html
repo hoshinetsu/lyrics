@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test of Lyrics</title>
+    <style>
+         :root {
+            color-scheme: dark;
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            margin: 0;
+            background-color: #8d7a73;
+            font-family: sans-serif;
+            overflow-y: scroll;
+        }
+        
+        main {
+            display: flex;
+            flex-direction: column;
+            max-width: 100%;
+            min-height: 100vh;
+        }
+        
+        .lyrics {
+            color: lightgray;
+            font-weight: bolder;
+            font-size: 20px;
+            padding-left: 15%;
+            user-select: none;
+            word-wrap: normal;
+            word-break: keep-all;
+            flex-basis: 85vh;
+            padding-bottom: 20vh;
+            padding-top: 5vh;
+        }
+        
+        .lyrics h1 {
+            margin: 0;
+            line-height: 60px;
+            cursor: pointer;
+        }
+        
+        .active {
+            color: white;
+        }
+        
+        .controls {
+            background-color: #222;
+            position: fixed;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            flex-basis: 15vh;
+            height: 15vh;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: center;
+            gap: 50px;
+        }
+        
+        #syncButton {
+            padding: 15px;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="lyrics">
+        </div>
+        <div class="controls"><button id="syncButton" onclick="syncLine()">Line Sync</button><audio id="track" controls>
+                <source src="ur_my_drug_i_luv_u.mp3" type="audio/mpeg">
+            </audio>
+            <button id="playButton" onclick="playAudio()">Play audio</button>
+        </div>
+    </main>
+    <script>
+        const track = document.getElementById("track");
+        track.volume = 0.15;
+        let lyrics = [];
+        fetch("drugs.json").then((response) => response.json()).then(function(json) {
+            Object.values(json.lyrics).forEach((line, value) => lyrics[value] = [line.text,
+                line.time
+            ]);
+            displayLyrics()
+        });
+
+        const container = document.querySelector(".lyrics");
+
+        /* display the lyrics */
+        function displayLyrics() {
+            for (let x = 0; x < lyrics.length; x++) {
+                const line = document.createElement("h1");
+                line.setAttribute("id", x);
+                line.setAttribute("onclick", "jumpTo(this.id)")
+                line.innerText = lyrics[x][0];
+                container.appendChild(line);
+            }
+        }
+        /* play the music and sync lyrics */
+        async function playAudio() {
+            track.play();
+            let cl = 0;
+            setInterval(function() {
+                if (track.currentTime >= lyrics[cl][1]) {
+                    jumpTo(cl)
+                    cl++;
+                    console.log("skip line")
+                }
+            }, 10);
+        }
+
+        let syncingLine = 0;
+        let jsonCode = '{"lyrics":{';
+        async function syncLine() {
+            if (syncingLine < lyrics.length) {
+                lyrics[syncingLine][1] = track.currentTime;
+                jumpTo(syncingLine);
+                xJsonCode = '"' + syncingLine + '":{"text":"' + lyrics[syncingLine][0] + '", "time":' + track.currentTime + "}";
+                console.log(lyrics[syncingLine][0] + " " + lyrics[syncingLine][1]);
+                if (syncingLine + 1 == lyrics.length) {
+                    jsonCode += xJsonCode + '}}';
+                    const codeEl = document.createElement("code");
+                    codeEl.innerText = jsonCode;
+                    container.appendChild(codeEl);
+                } else {
+                    jsonCode += xJsonCode + ",";
+                }
+                syncingLine++;
+            }
+        }
+
+        function jumpTo(line) {
+            syncingLine = line;
+            document.getElementById(line).setAttribute("class", "active");
+            document.getElementById(line).scrollIntoView();
+        }
+    </script>
+</body>
+
+</html>
