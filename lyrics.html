@@ -59,18 +59,19 @@
         }
         
         .controls {
-            background-color: #1a1a1a;
-            position: fixed;
-            left: 0;
+            position: absolute;
             bottom: 0;
-            width: 100%;
+            left: 0;
+            background-color: #1a1a1a;
+            border-top: 1px solid #666;
+        }
+        
+        .controls div div {
             height: 100px;
             display: flex;
-            flex-direction: row;
-            justify-content: space-evenly;
-            gap: 50px;
+            flex-direction: column;
             align-items: center;
-            border-top: 1px solid #666;
+            justify-content: center;
         }
         
         #syncButton {
@@ -98,6 +99,20 @@
         h6 {
             margin: 0;
         }
+        
+        .mode-off {
+            display: none;
+        }
+        
+        .mode-on {}
+        
+        audio {
+            width: 100%;
+        }
+        
+        .ptr {
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -119,18 +134,23 @@
         <div class="row lyrics-wrapper">
             <div class="lyrics col-12"></div>
         </div>
-        <div class="row">
-            <div class="col-12 controls">
-                <div class="song">
-                    <h4>now::playing</h4>
+    </main>
+    <footer class="container-fluid controls">
+        <div class="row px-5">
+            <div class="col-2 song ptr">
+                <div class="song" onclick="modeSwitch()">
+                    <h4 id="mode_pb"><b>playback</b>::<b>mode</b></h4>
+                    <h4 id="mode_sc" class="mode-off"><b>sync</b>::<b>mode</b><br>(not <br>implemented yet)</h4>
                     </p>
-                </div><button id="syncButton" onclick="syncLine()">Line Sync</button><audio id="track" controls ontimeupdate="updateTime()">
+                </div>
+            </div>
+            <div class="col-8"><audio id="track" controls ontimeupdate="updateTime()">
                     <source src="ur_my_drug_i_luv_u.mp3" type="audio/mpeg">
                 </audio>
-                <button id="playButton" onclick="playAudio()">Play audio</button>
             </div>
+            <div class="col-2 song">meow meow</div>
         </div>
-    </main>
+    </footer>
     <script>
         const track = document.getElementById("track");
         const container = document.querySelector(".lyrics");
@@ -138,6 +158,20 @@
         var lyrics = [];
         var currentLine = 0;
         var lastLine = 0;
+        var editMode = false;
+
+        function modeSwitch() {
+            editMode = !editMode;
+            if (editMode) {
+                document.getElementById("mode_sc").setAttribute("class", "mode-on");
+                document.getElementById("mode_pb").setAttribute("class", "mode-off");
+                alert("Work in progress, edit mode ain't available yet.\r\nBut enjoy the toggle effect! ;3");
+            } else {
+                document.getElementById("mode_sc").setAttribute("class", "mode-off");
+                document.getElementById("mode_pb").setAttribute("class", "mode-on");
+            }
+
+        }
 
         /* load lyrics file */
         fetch("drugs.json").then((response) => response.json()).then(function(json) {
