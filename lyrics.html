@@ -50,7 +50,7 @@
             font-weight: bolder;
         }
         
-        #L0 {
+        h1[id$='0'] {
             display: none;
         }
         
@@ -187,7 +187,7 @@
         function displayLyrics() {
             for (let x = 0; x < lyrics.length; x++) {
                 const line = document.createElement("h1");
-                line.setAttribute("id", "L" + x);
+                line.setAttribute("id", x);
                 line.setAttribute("onclick", "jumpTo(this.id)")
                 line.innerText = lyrics[x][0];
                 container.appendChild(line);
@@ -195,7 +195,7 @@
         }
         /* play the music and sync lyrics */
         function updateTime() {
-            while (currentLine < lyrics.length - 1 && track.currentTime > lyrics[currentLine + 1][1]) {
+            while (currentLine < lyrics.length - 1 && track.currentTime >= lyrics[currentLine + 1][1]) {
                 currentLine++;
             }
             while (currentLine > 0 && track.currentTime < lyrics[currentLine][1]) {
@@ -233,13 +233,13 @@
 
         function updateLyricsDisplay() {
             for (let x = lyrics.length - 1; x >= currentLine; x--) {
-                document.getElementById("L" + x).setAttribute("class", "");
+                document.getElementById(x).setAttribute("class", "");
             }
             for (let x = 0; x <= currentLine; x++) {
-                document.getElementById("L" + x).setAttribute("class", "active");
+                document.getElementById(x).setAttribute("class", "active");
             }
 
-            document.getElementById("L" + currentLine).scrollIntoView();
+            document.getElementById(currentLine).scrollIntoView();
         }
 
         function jumpTo(line) {
