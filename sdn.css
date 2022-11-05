@@ -194,13 +194,13 @@ a {
     color: #666;
 }
 
-h2 small {
+h1 h2 span {
     font-size: 0.5em;
     vertical-align: middle;
     height: 100%;
 }
 
-h2 small::before {
+h1 h2 span::before {
     content: ' \2022  ';
 }
 

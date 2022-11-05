@@ -83,7 +83,7 @@ function createTrack(source) {
 function writeLine(id, txt) {
     const line = document.createElement("h1");
     line.setAttribute("id", id);
-    line.setAttribute("onclick", "jumpTo(this.id)")
+    line.setAttribute("onclick", "x(this)")
     line.innerText = txt;
     container.appendChild(line);
 }
@@ -161,7 +161,7 @@ function resetTimings() {
 /* used when switching modes */
 function reloadLyrics(x) {
     if (syncMode)
-        document.getElementById(x).innerHTML = "<h2>" + lyrics[x][0] + "<small>" + lyrics[x][1] + "</small></h2>";
+        document.getElementById(x).innerHTML = "<h2>" + lyrics[x][0] + '<span>' + lyrics[x][1].toFixed(5) + "</span></h2>";
     else
         document.getElementById(x).textContent = lyrics[x][0];
 }
@@ -198,7 +198,8 @@ function updateLyricsDisplay() {
 }
 
 /* invoked when a line is clicked */
-function jumpTo(line) {
+function x(i) {
+    line = i.getAttribute("id");
     if (syncMode) {
         if (line == 0) {
             track.currentTime = 0;
@@ -209,6 +210,10 @@ function jumpTo(line) {
         track.play();
         track.currentTime = lyrics[line][1] + 0.15;
     }
+}
+
+function e(i) {
+    track.currentTime = lyrics[i.getAttribute("id")][1] + 0.15;
 }
 
 /* serialize the lyrics into json format */
