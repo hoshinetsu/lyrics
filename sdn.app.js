@@ -1,30 +1,15 @@
+/* coded by hoshinetsu */
+
+/* constant fields */
 const container = document.querySelector(".lyrics");
 const player = document.getElementById("player");
-// const urlParams = new URLSearchParams(window.location.search); ne
 
-/* add the audio tag */
-function createTrack(source) {
-    player.innerHTML = "";
-    var a = document.createElement("audio");
-    a.volume = 0.15; /* no earrapes */
-    a.setAttribute("controls", "");
-    a.setAttribute("id", "track");
-    a.setAttribute("ontimeupdate", "updateTime()");
-    var b = document.createElement("source");
-    b.setAttribute("src", source);
-    b.setAttribute("type", "audio/mpeg");
-    a.appendChild(b);
-    player.appendChild(a);
-    return a;
-}
-
-var song, by, currentLine, lastLine;
-var lyrics = [];
+/* needed variables */
+var song, by, currentLine, lastLine, lyrics;
 var syncMode = false;
 var libMode = false;
 var songLoaded = false;
 var track = document.getElementById("track");
-
 
 /* opens and closes the song library */
 function songLib() {
@@ -44,8 +29,6 @@ function playSong(trigger) {
     track.play()
 }
 
-
-
 /* switch between playback and sync modes */
 async function modeSwitch() {
     if (!songLoaded) return;
@@ -54,7 +37,6 @@ async function modeSwitch() {
     const mpb = document.getElementById("mode_pb");
     const lib = document.getElementById("lib");
     const edi = document.getElementById("edi");
-
 
     if (lock.checked) {
         alert("Mode is locked to prevent accidental switching.\r\nRemove mode lock and switch again.");
@@ -81,17 +63,49 @@ async function modeSwitch() {
     }
 }
 
+/* add the audio tag */
+function createTrack(source) {
+    player.innerHTML = "";
+    var a = document.createElement("audio");
+    a.volume = 0.15; /* no earrapes */
+    a.setAttribute("controls", "");
+    a.setAttribute("id", "track");
+    a.setAttribute("ontimeupdate", "updateTime()");
+    var b = document.createElement("source");
+    b.setAttribute("src", source);
+    b.setAttribute("type", "audio/mpeg");
+    a.appendChild(b);
+    player.appendChild(a);
+    return a;
+}
+
+/* create a lyric line in the container */
+function writeLine(id, txt) {
+    const line = document.createElement("h1");
+    line.setAttribute("id", id);
+    line.setAttribute("onclick", "jumpTo(this.id)")
+    line.innerText = txt;
+    container.appendChild(line);
+}
+
+/* display the lyrics */
+function loadLyrics() {
+    currentLine = lastLine = -1;
+    for (let x = 0; x < lyrics.length; x++) {
+        writeLine(x, lyrics[x][0])
+    }
+    writeLine("nil", "endl");
+}
+
 /* load the song files */
 function loadSong(aud, lyr) {
-    const src = document.createElement("source");
     const xsg = document.getElementById("xsong");
     const xby = document.getElementById("xby");
 
     xsg.textContent = xby.textContent = "loading..";
     container.innerHTML = "";
-    player.innerHTML = "";
     track = createTrack("songs/" + aud);
-
+    lyrics = [];
     fetch("lyrics/" + lyr).then((response) => response.json()).then(function(json) {
         xsg.textContent = song = json.song;
         xby.textContent = by = json.by;
@@ -106,28 +120,6 @@ function loadSong(aud, lyr) {
     }, function(reason) {
         writeLine("err", "error: malformed song JSON");
     });
-}
-
-/* create a lyric line in the container */
-function writeLine(id, txt) {
-    const line = document.createElement("h1");
-    line.setAttribute("id", id);
-    line.setAttribute("onclick", "jumpTo(this.id)")
-    line.innerText = txt;
-    container.appendChild(line);
-}
-
-// /* invoke loads an example song */
-// loadSong("ur_my_drug_i_luv_u.mp3", "drugs.json");
-// loadSong(urlParams.get('song') + ".mp3", urlParams.get('song') + ".json")
-
-/* display the lyrics */
-function loadLyrics() {
-    currentLine = lastLine = -1;
-    for (let x = 0; x < lyrics.length; x++) {
-        writeLine(x, lyrics[x][0])
-    }
-    writeLine("nil", "nil");
 }
 
 /* play the music and sync lyrics */
@@ -228,7 +220,7 @@ function serializeJson() {
 
 /* saves lyrics to a text file*/
 function dlLyrics() {
-    download("Syncd lyrics for " + song + ".json", serializeJson())
+    download("sdn lyrics for " + song + ".json", serializeJson())
 }
 
 /* download string as text file */
@@ -242,6 +234,9 @@ function download(file, content) {
     document.body.removeChild(element);
 }
 
-container.innerHTML += '<h2><em>Application loaded successfully.</em></h2>';
-container.innerHTML += '<h1 class="hl">No song selected</h1>';
-container.innerHTML += '<h1 class="hl">Select a song from the library.</h1>';
+/* greet the endpoint if the script loaded correctly */
+container.innerHTML += '<h2><em>application loaded successfully</em></h2>';
+container.innerHTML += '<h1 class="hl">no song selected</h1>';
+container.innerHTML += '<h1 class="hl">select a song from the library</h1>';
+
+/* EOF */
