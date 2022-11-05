@@ -25,7 +25,9 @@
             border: 2px solid rgba(0, 0, 0, 0);
         }
         
-        body {
+        body,
+        header,
+        main {
             background-color: #222;
         }
         
@@ -52,7 +54,7 @@
             word-break: keep-all;
             overflow-y: scroll;
             scroll-behavior: smooth;
-            margin-bottom: 150px;
+            margin-bottom: 120px;
             margin-top: 80px;
         }
         
@@ -90,7 +92,7 @@
             border-top: 1px solid #666;
         }
         
-        .controls div div {
+        .controls .flx {
             height: 100px;
             display: flex;
             flex-direction: column;
@@ -137,6 +139,16 @@
         .ptr {
             cursor: pointer;
         }
+        
+        .player-blk {
+            align-self: center;
+            flex: 1;
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            color: #ccc;
+            gap: 10px;
+        }
     </style>
 </head>
 
@@ -161,18 +173,30 @@
     </main>
     <footer class="container-fluid controls">
         <div class="row px-5">
-            <div class="col-2 song ptr">
+            <div class="col-2 song ptr flx">
                 <div class="song" onclick="modeSwitch()">
                     <h4 id="mode_pb"><b>playback</b>::<b>mode</b></h4>
                     <h4 id="mode_sc" class="mode-off"><b>sync</b>::<b>mode</b><br>(not <br>implemented yet)</h4>
                     </p>
                 </div>
             </div>
-            <div class="col-8"><audio id="track" controls ontimeupdate="updateTime()">
+            <div class="col-8 flx"><audio id="track" controls ontimeupdate="updateTime()">
                     <source src="ur_my_drug_i_luv_u.mp3" type="audio/mpeg">
                 </audio>
+                <!-- <div class="player-container">
+                    <div class="player-blk">
+                        <button id="player-play">></button>
+                        <span id="player-pos">0:00</span>
+                        <input type="range" id="player-seek" max="100" value="0">
+                        <span id="player-len">0:00</span>
+                    </div>
+                    <div class="player-blk">
+                        <span id="player-vol">15</span>
+                        <input type="range" id="player-dial" max="100" value="15">
+                    </div>
+                </div> -->
             </div>
-            <div class="col-2 song">meow meow</div>
+            <div class="col-2 song flx">meow meow</div>
         </div>
     </footer>
     <script>
@@ -219,13 +243,14 @@
         /* play the music and sync lyrics */
         function updateTime() {
             let track = document.getElementById("track");
-            while (currentLine < lyrics.length - 1 && track.currentTime >= lyrics[currentLine + 1][1]) {
-                currentLine++;
+            let line = currentLine;
+            while (line < lyrics.length - 1 && track.currentTime >= lyrics[line + 1][1]) {
+                line++;
             }
-            while (currentLine > 0 && track.currentTime < lyrics[currentLine][1]) {
-                currentLine--;
+            while (line > 0 && track.currentTime < lyrics[line][1]) {
+                line--;
             }
-            setLine(currentLine)
+            setLine(line)
         }
 
         let syncingLine = 0;
@@ -250,10 +275,19 @@
         }
 
         function setLine(line) {
-            console.log("CL:" + line);
-            lastLine = currentLine;
-            currentLine = line;
-            updateLyricsDisplay()
+            if (currentLine != line) {
+                lastLine = currentLine;
+                currentLine = line;
+                updateLyricsDisplay()
+            } else {
+                console.log(currentLine + " x " + line)
+            }
+        }
+
+        function scrollToLine(line) {
+            let pct = line - 1;
+            const box = document.querySelector('.lyrics-wrapper');
+            box.scroll(0, pct * 48 - 240)
         }
 
         function updateLyricsDisplay() {
@@ -263,8 +297,7 @@
             for (let x = 0; x <= currentLine; x++) {
                 document.getElementById(x).setAttribute("class", "active");
             }
-            if (currentLine > 0)
-                document.getElementById(currentLine - 1).scrollIntoView();
+            scrollToLine(currentLine)
         }
 
         function jumpTo(line) {
