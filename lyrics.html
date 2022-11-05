@@ -71,10 +71,6 @@
             text-shadow: 3px 3px 1px #444;
         }
         
-        h1[id$='0'] {
-            display: none;
-        }
-        
         .active {
             color: #eee;
             text-shadow: 3px 3px 1px #3a3a3a;
@@ -149,6 +145,38 @@
             color: #ccc;
             gap: 10px;
         }
+        
+        .modesw {
+            text-align: center;
+        }
+        
+        .modesw h4,
+        .modesw a {
+            transition-duration: 300ms;
+        }
+        
+        .modesw h4:hover,
+        .modesw a:hover {
+            text-shadow: 0px 0px 5px #aaa;
+        }
+        
+        .modesw a {
+            color: #666;
+        }
+        
+        h2 small {
+            font-size: 0.5em;
+            vertical-align: middle;
+            height: 100%;
+        }
+        
+        h2 small::before {
+            content: ' \2022  ';
+        }
+        
+        #err {
+            color: red;
+        }
     </style>
 </head>
 
@@ -156,8 +184,8 @@
     <header class="container-fluid">
         <div class="row">
             <div class="col-12 col-md-6 text-start song">
-                <p>::song <b>ur my drug i luv u</b></p>
-                <p>::by <b>hoshie star, roninkys</b>
+                <p>::song <b id="xsong"></b></p>
+                <p>::by <b id="xby"></b>
             </div>
             <div class="col-12 col-md-6 text-end song">
                 <h6>::app <b>syncdeeznotes</b> ver. 1.4.2.0-ALF</h6>
@@ -174,9 +202,14 @@
     <footer class="container-fluid controls">
         <div class="row px-5">
             <div class="col-2 song ptr flx">
-                <div class="song" onclick="modeSwitch()">
-                    <h4 id="mode_pb"><b>playback</b>::<b>mode</b></h4>
-                    <h4 id="mode_sc" class="mode-off"><b>sync</b>::<b>mode</b><br>(not <br>implemented yet)</h4>
+                <div class="modesw">
+                    <div id="mode_pb">
+                        <h4 onclick="modeSwitch()" title="Switch to sync mode"><b>playback</b>::<b>mode</b></h4>
+                    </div>
+                    <div id="mode_sc" class="mode-off" title="Switch to playback mode">
+                        <h4 onclick="modeSwitch()"><b>sync</b>::<b>mode</b></h4>
+                        <a href="javascript:getJson()" title="Export synced lyrics">save::lyrics</a>
+                    </div>
                     </p>
                 </div>
             </div>
@@ -201,48 +234,72 @@
     </footer>
     <script>
         const container = document.querySelector(".lyrics");
-        document.getElementById("track").volume = 0.15;
+        const track = document.getElementById("track");
+        track.volume = 0.15;
+        var song;
+        var by;
         var lyrics = [];
-        var currentLine = 0;
-        var lastLine = 0;
-        var editMode = false;
+        var currentLine = -1;
+        var lastLine = -1;
+        var syncMode = false;
 
         function modeSwitch() {
-            editMode = !editMode;
-            if (editMode) {
+            track.pause();
+            track.currentTime = 0
+            setLine(0)
+
+            syncMode = !syncMode;
+            if (syncMode) {
                 document.getElementById("mode_sc").setAttribute("class", "mode-on");
                 document.getElementById("mode_pb").setAttribute("class", "mode-off");
-                alert("Work in progress, edit mode ain't available yet.\r\nBut enjoy the toggle effect! ;3");
+
             } else {
                 document.getElementById("mode_sc").setAttribute("class", "mode-off");
                 document.getElementById("mode_pb").setAttribute("class", "mode-on");
             }
-
+            for (let x = 0; x < lyrics.length; x++)
+                reloadLyrics(x)
         }
 
         /* load lyrics file */
-        fetch("drugs.json").then((response) => response.json()).then(function(json) {
-            lyrics[0] = ["chuj", 0];
-            Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line.text,
-                line.time
-            ]);
-            displayLyrics()
-        });
+        function loadSong(file) {
+            fetch(file).then((response) => response.json()).then(function(json) {
+                document.getElementById("xsong").innerHTML = song = json.song;
+                document.getElementById("xby").innerHTML = by = json.by;
+                lyrics[0] = ["::[play-song]", 0];
+                Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
+                    line[1]
+                ]);
+                loadLyrics();
+            }, function(reason) {
+                writeLine("err", "error: malformed song JSON");
+            });
+        }
 
+        function writeLine(id, txt) {
+            const line = document.createElement("h1");
+            line.setAttribute("id", id);
+            line.setAttribute("onclick", "jumpTo(this.id)")
+            line.innerText = txt;
+            container.appendChild(line);
+        }
+
+        try {
+            loadSong("drugs.json");
+        } catch (error) {
+            writeLine("err", "error: unable to load the song metadata.");
+        }
 
         /* display the lyrics */
-        function displayLyrics() {
+        function loadLyrics() {
             for (let x = 0; x < lyrics.length; x++) {
-                const line = document.createElement("h1");
-                line.setAttribute("id", x);
-                line.setAttribute("onclick", "jumpTo(this.id)")
-                line.innerText = lyrics[x][0];
-                container.appendChild(line);
+                writeLine(x, lyrics[x][0])
             }
         }
+
         /* play the music and sync lyrics */
         function updateTime() {
-            let track = document.getElementById("track");
+            if (syncMode) return;
             let line = currentLine;
             while (line < lyrics.length - 1 && track.currentTime >= lyrics[line + 1][1]) {
                 line++;
@@ -253,34 +310,29 @@
             setLine(line)
         }
 
-        let syncingLine = 0;
-        let jsonCode = '{"lyrics":{';
-        async function syncLine() {
-            let track = document.getElementById("track");
-            if (syncingLine < lyrics.length) {
-                lyrics[syncingLine][1] = track.currentTime;
-                setLine(syncingLine);
-                xJsonCode = '"' + syncingLine + '":{"text":"' + lyrics[syncingLine][0] + '", "time":' + track.currentTime + "}";
-                console.log(lyrics[syncingLine][0] + " " + lyrics[syncingLine][1]);
-                if (syncingLine + 1 == lyrics.length) {
-                    jsonCode += xJsonCode + '}}';
-                    const codeEl = document.createElement("code");
-                    codeEl.innerText = jsonCode;
-                    container.appendChild(codeEl);
-                } else {
-                    jsonCode += xJsonCode + ",";
-                }
-                syncingLine++;
+        function syncLine(line) {
+            if (syncMode && line < lyrics.length) {
+                let time = track.currentTime - 0.3;
+                lastTime = time;
+                lyrics[line][1] = time;
+                reloadLyrics(line)
+                setLine(Math.min(line, lyrics.length - 1))
             }
         }
 
+        function reloadLyrics(x) {
+            if (syncMode)
+                document.getElementById(x).innerHTML = "<h2>" + lyrics[x][0] + "<small>" + lyrics[x][1] + "</small></h2>";
+            else
+                document.getElementById(x).innerHTML = lyrics[x][0];
+        }
+
         function setLine(line) {
+            console.log("xSet line " + line)
             if (currentLine != line) {
                 lastLine = currentLine;
                 currentLine = line;
                 updateLyricsDisplay()
-            } else {
-                console.log(currentLine + " x " + line)
             }
         }
 
@@ -292,17 +344,48 @@
 
         function updateLyricsDisplay() {
             for (let x = lyrics.length - 1; x >= currentLine; x--) {
-                document.getElementById(x).setAttribute("class", "");
+                document.getElementById(x).removeAttribute("class");
             }
             for (let x = 0; x <= currentLine; x++) {
                 document.getElementById(x).setAttribute("class", "active");
+                if (syncMode) {
+                    reloadLyrics(x);
+                }
             }
             scrollToLine(currentLine)
         }
 
         function jumpTo(line) {
-            console.log("jumping to " + line);
-            document.getElementById("track").currentTime = lyrics[line][1];
+            if (syncMode) {
+                if (line == 0) {
+                    track.currentTime = 0;
+                    track.play();
+                }
+                let target = line;
+                if (line <= 1 && currentLine <= 1) {
+                    target = 1;
+                }
+                syncLine(target);
+            } else {
+                track.play();
+                track.currentTime = lyrics[line][1];
+            }
+        }
+
+        function getJson() {
+            let json = [];
+            json.push('{', '"song":"', song, '","by":"', by, '","lyrics":', JSON.stringify(lyrics.slice(1)), '}');
+            textFile("Lyrics of " + song + ".json", json.join(""))
+        }
+
+        function textFile(file, content) {
+            var element = document.createElement('a');
+            element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+            element.setAttribute('download', file);
+            element.style.display = 'none';
+            document.body.appendChild(element);
+            element.click();
+            document.body.removeChild(element);
         }
     </script>
 </body>
