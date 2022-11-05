@@ -18,10 +18,8 @@ function createTrack(source) {
     return a;
 }
 
-var song, by;
+var song, by, currentLine, lastLine;
 var lyrics = [];
-var currentLine = -1;
-var lastLine = -1;
 var syncMode = false;
 var libMode = false;
 var songLoaded = false;
@@ -125,6 +123,7 @@ function writeLine(id, txt) {
 
 /* display the lyrics */
 function loadLyrics() {
+    currentLine = lastLine = -1;
     for (let x = 0; x < lyrics.length; x++) {
         writeLine(x, lyrics[x][0])
     }
