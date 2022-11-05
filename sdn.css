@@ -15,6 +15,10 @@
     border: 2px solid rgba(0, 0, 0, 0);
 }
 
+.hl {
+    color: limegreen;
+}
+
 body {
     background-color: #222;
 }
@@ -83,13 +87,13 @@ h1:hover {
     font-family: monospace;
 }
 
-.song p {
+p {
     line-height: 1.1em;
     margin: 0;
     text-align: inherit;
 }
 
-.song * b {
+b {
     color: #bbb;
 }
 

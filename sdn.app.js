@@ -74,8 +74,9 @@ function writeLine(id, txt) {
     container.appendChild(line);
 }
 
-/* invoke loads an example song */
-loadSong("ur_my_drug_i_luv_u.mp3", "drugs.json");
+// /* invoke loads an example song */
+// loadSong("ur_my_drug_i_luv_u.mp3", "drugs.json");
+loadSong(urlParams.get('song') + ".mp3", urlParams.get('song') + ".json")
 
 /* display the lyrics */
 function loadLyrics() {
