@@ -1,18 +1,28 @@
+@font-face {
+    font-family: Nunito;
+    src: url('font/NunitoSans-ExtraBold.woff2');
+}
+
+@font-face {
+    font-family: JBMono;
+    src: url('font/JetBrainsMono-Regular.woff2');
+}
+
 :root {
     color-scheme: dark;
 }
 
 ::-webkit-scrollbar {
     display: block;
-    width: 10px;
-    background-color: #1a1a1a;
+    width: 8px;
+    background-color: #222;
 }
 
 ::-webkit-scrollbar-thumb {
     background-color: #aaa;
     background-clip: padding-box;
     border-radius: 9999px;
-    border: 2px solid rgba(0, 0, 0, 0);
+    border: 2px solid #222;
 }
 
 .hl {
@@ -29,6 +39,7 @@ a.hl:hover {
 
 body {
     background-color: #222;
+    font-family: JBMono, monospace;
 }
 
 main {
@@ -58,6 +69,7 @@ header {
 
 .lyrics-wrapper {
     color: #7a7a7a;
+    font-family: Nunito, sans-serif;
     font-size: 20px;
     user-select: none;
     word-wrap: normal;
@@ -69,10 +81,10 @@ header {
 }
 
 h1 {
-    margin: 1rem 0;
+    margin: 1.25rem 0;
     width: fit-content;
+    font-weight: 800;
     cursor: pointer;
-    font-weight: bolder;
     transition-duration: 300ms;
     text-shadow: 3px 3px 1px #2a2a2a;
 }
@@ -82,12 +94,12 @@ h1:hover {
 }
 
 .active {
-    color: #eee;
+    color: #dedede;
     text-shadow: 3px 3px 1px #3a3a3a;
 }
 
 .active:hover {
-    text-shadow: 3px 3px 1px #999;
+    text-shadow: 3px 3px 1px #6a6a6a;
 }
 
 .flx {
@@ -107,7 +119,6 @@ h1:hover {
     flex-direction: column;
     flex-wrap: wrap;
     color: #7a7a7a;
-    font-family: monospace;
 }
 
 .song h5 {
