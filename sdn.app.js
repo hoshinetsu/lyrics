@@ -1,6 +1,22 @@
 const container = document.querySelector(".lyrics");
-const track = document.getElementById("track");
+const player = document.getElementById("player");
 // const urlParams = new URLSearchParams(window.location.search); ne
+
+/* add the audio tag */
+function createTrack(source) {
+    player.innerHTML = "";
+    var a = document.createElement("audio");
+    a.volume = 0.15; /* no earrapes */
+    a.setAttribute("controls", "");
+    a.setAttribute("id", "track");
+    a.setAttribute("ontimeupdate", "updateTime()");
+    var b = document.createElement("source");
+    b.setAttribute("src", source);
+    b.setAttribute("type", "audio/mpeg");
+    a.appendChild(b);
+    player.appendChild(a);
+    return a;
+}
 
 var song, by;
 var lyrics = [];
@@ -9,9 +25,8 @@ var lastLine = -1;
 var syncMode = false;
 var libMode = false;
 var songLoaded = false;
+var track = document.getElementById("track");
 
-/* no earrapes */
-track.volume = 0.15;
 
 /* opens and closes the song library */
 function songLib() {
@@ -23,12 +38,15 @@ function songLib() {
     }
 }
 
+/* play a song from library */
 function playSong(trigger) {
     const name = trigger.getAttribute("data-songname");
     loadSong(name + ".mp3", name + ".json");
     songLib()
     track.play()
 }
+
+
 
 /* switch between playback and sync modes */
 async function modeSwitch() {
@@ -72,13 +90,9 @@ function loadSong(aud, lyr) {
     const xby = document.getElementById("xby");
 
     xsg.textContent = xby.textContent = "loading..";
-    container.textContent = "";
-    src.setAttribute("src", "songs/" + aud);
-    src.setAttribute("type", "audio/mpeg");
-    track.pause();
-    track.currentTime = 0;
-    track.textContent = "";
-    track.appendChild(src);
+    container.innerHTML = "";
+    player.innerHTML = "";
+    track = createTrack("songs/" + aud);
 
     fetch("lyrics/" + lyr).then((response) => response.json()).then(function(json) {
         xsg.textContent = song = json.song;
