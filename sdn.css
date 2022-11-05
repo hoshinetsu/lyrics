@@ -140,21 +140,19 @@ h6 {
     margin: 0;
 }
 
-.mode-off {
+.mode-off,
+#player a {
     display: none;
 }
 
-#nil {
+#nil,
+.yeet {
     text-indent: -100vw;
 }
 
 #player {
     width: 100%;
     text-align: center;
-}
-
-#player a {
-    display: none;
 }
 
 audio {

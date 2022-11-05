@@ -99,9 +99,10 @@ function loadLyrics() {
 
 /* load the song files */
 function loadSong(aud, lyr) {
+    document.getElementById("song").classList.remove("yeet");
+    document.getElementById("by").classList.remove("yeet");
     const xsg = document.getElementById("xsong");
     const xby = document.getElementById("xby");
-
     xsg.textContent = xby.textContent = "loading..";
     container.innerHTML = "";
     track = createTrack("songs/" + aud);
@@ -129,7 +130,7 @@ function updateTime() {
     while (line < lyrics.length - 1 && track.currentTime >= lyrics[line + 1][1]) {
         line++;
     }
-    while (line > 0 && track.currentTime < lyrics[line][1]) {
+    while (line <= lyrics.length - 1 && line > 0 && track.currentTime < lyrics[line][1]) {
         line--;
     }
     setLine(line)
