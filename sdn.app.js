@@ -1,5 +1,6 @@
 const container = document.querySelector(".lyrics");
 const track = document.getElementById("track");
+const urlParams = new URLSearchParams(window.location.search);
 
 var song, by;
 var lyrics = [];
@@ -15,6 +16,7 @@ async function modeSwitch() {
     const lock = document.getElementById("xlock");
     const msc = document.getElementById("mode_sc");
     const mpb = document.getElementById("mode_pb");
+
 
     if (lock.checked) {
         alert("Mode is locked to prevent accidental switching.\r\nUnlock current mode and switch again.");
