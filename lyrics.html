@@ -5,115 +5,169 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Test of Lyrics</title>
+    <title>Lyrics syncer BETA | hoshinetsu</title>
+    <link rel="Stylesheet" href="bootstrap.min.css">
     <style>
          :root {
             color-scheme: dark;
-            scroll-behavior: smooth;
         }
         
         body {
-            margin: 0;
-            background-color: #8d7a73;
-            font-family: sans-serif;
-            overflow-y: scroll;
+            background-color: #222;
+        }
+        
+        header {
+            color: #eee;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
         
         main {
             display: flex;
             flex-direction: column;
-            max-width: 100%;
-            min-height: 100vh;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
         }
         
-        .lyrics {
-            color: lightgray;
-            font-weight: bolder;
+        .lyrics-wrapper {
+            color: #9a9a9a;
             font-size: 20px;
-            padding-left: 15%;
             user-select: none;
             word-wrap: normal;
             word-break: keep-all;
-            flex-basis: 85vh;
-            padding-bottom: 20vh;
-            padding-top: 5vh;
+            overflow-y: scroll;
+            scroll-behavior: smooth;
+            margin-bottom: 150px;
+            margin-top: 80px;
         }
         
-        .lyrics h1 {
-            margin: 0;
-            line-height: 60px;
+        h1 {
+            margin: 10px 0;
+            width: fit-content;
             cursor: pointer;
+            font-weight: bolder;
+        }
+        
+        #L0 {
+            display: none;
         }
         
         .active {
-            color: white;
+            color: #eee;
         }
         
         .controls {
-            background-color: #222;
+            background-color: #1a1a1a;
             position: fixed;
             left: 0;
             bottom: 0;
             width: 100%;
-            flex-basis: 15vh;
-            height: 15vh;
+            height: 100px;
             display: flex;
             flex-direction: row;
-            align-items: center;
-            justify-content: center;
+            justify-content: space-evenly;
             gap: 50px;
+            align-items: center;
+            border-top: 1px solid #666;
         }
         
         #syncButton {
             padding: 15px;
         }
+        
+        .song {
+            display: flex;
+            flex-direction: column;
+            flex-wrap: wrap;
+            color: #7a7a7a;
+            font-family: monospace;
+        }
+        
+        .song p {
+            line-height: 1.1em;
+            margin: 0;
+            text-align: left;
+        }
+        
+        .song * b {
+            color: #bbb;
+        }
+        
+        h6 {
+            margin: 0;
+        }
     </style>
 </head>
 
 <body>
-    <main>
-        <div class="lyrics">
+    <header class="container-fluid">
+        <div class="row">
+            <div class="col-12 col-md-6 text-start song">
+                <p>::song <b>ur my drug i luv u</b></p>
+                <p>::by <b>hoshie star, roninkys</b>
+            </div>
+            <div class="col-12 col-md-6 text-end song">
+                <h6>::app <b>syncdeeznotes</b> ver. 1.4.2.0-ALF</h6>
+                <h6>::dev <b><a href="https://hoshinetsu.moe" class="text-secondary" target="_blank">@hoshinetsu</a></b>
+                </h6>
+            </div>
         </div>
-        <div class="controls"><button id="syncButton" onclick="syncLine()">Line Sync</button><audio id="track" controls>
-                <source src="ur_my_drug_i_luv_u.mp3" type="audio/mpeg">
-            </audio>
-            <button id="playButton" onclick="playAudio()">Play audio</button>
+    </header>
+    <main class="container">
+        <div class="row lyrics-wrapper">
+            <div class="lyrics col-12"></div>
+        </div>
+        <div class="row">
+            <div class="col-12 controls">
+                <div class="song">
+                    <h4>now::playing</h4>
+                    </p>
+                </div><button id="syncButton" onclick="syncLine()">Line Sync</button><audio id="track" controls ontimeupdate="updateTime()">
+                    <source src="ur_my_drug_i_luv_u.mp3" type="audio/mpeg">
+                </audio>
+                <button id="playButton" onclick="playAudio()">Play audio</button>
+            </div>
         </div>
     </main>
     <script>
         const track = document.getElementById("track");
-        track.volume = 0.15;
-        let lyrics = [];
+        const container = document.querySelector(".lyrics");
+        track.volume = 0.25;
+        var lyrics = [];
+        var currentLine = 0;
+        var lastLine = 0;
+
+        /* load lyrics file */
         fetch("drugs.json").then((response) => response.json()).then(function(json) {
-            Object.values(json.lyrics).forEach((line, value) => lyrics[value] = [line.text,
+            lyrics[0] = ["chuj", 0];
+            Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line.text,
                 line.time
             ]);
             displayLyrics()
         });
 
-        const container = document.querySelector(".lyrics");
 
         /* display the lyrics */
         function displayLyrics() {
             for (let x = 0; x < lyrics.length; x++) {
                 const line = document.createElement("h1");
-                line.setAttribute("id", x);
+                line.setAttribute("id", "L" + x);
                 line.setAttribute("onclick", "jumpTo(this.id)")
                 line.innerText = lyrics[x][0];
                 container.appendChild(line);
             }
         }
         /* play the music and sync lyrics */
-        async function playAudio() {
-            track.play();
-            let cl = 0;
-            setInterval(function() {
-                if (track.currentTime >= lyrics[cl][1]) {
-                    jumpTo(cl)
-                    cl++;
-                    console.log("skip line")
-                }
-            }, 10);
+        function updateTime() {
+            while (currentLine < lyrics.length - 1 && track.currentTime > lyrics[currentLine + 1][1]) {
+                currentLine++;
+            }
+            while (currentLine > 0 && track.currentTime < lyrics[currentLine][1]) {
+                currentLine--;
+            }
+            setLine(currentLine)
         }
 
         let syncingLine = 0;
@@ -121,7 +175,7 @@
         async function syncLine() {
             if (syncingLine < lyrics.length) {
                 lyrics[syncingLine][1] = track.currentTime;
-                jumpTo(syncingLine);
+                setLine(syncingLine);
                 xJsonCode = '"' + syncingLine + '":{"text":"' + lyrics[syncingLine][0] + '", "time":' + track.currentTime + "}";
                 console.log(lyrics[syncingLine][0] + " " + lyrics[syncingLine][1]);
                 if (syncingLine + 1 == lyrics.length) {
@@ -136,10 +190,28 @@
             }
         }
 
+        function setLine(line) {
+            console.log("CL:" + line);
+            lastLine = currentLine;
+            currentLine = line;
+            updateLyricsDisplay()
+        }
+
+        function updateLyricsDisplay() {
+            for (let x = lyrics.length - 1; x >= currentLine; x--) {
+                document.getElementById("L" + x).setAttribute("class", "");
+            }
+            for (let x = 0; x <= currentLine; x++) {
+                document.getElementById("L" + x).setAttribute("class", "active");
+            }
+
+            document.getElementById("L" + currentLine).scrollIntoView();
+        }
+
         function jumpTo(line) {
-            syncingLine = line;
-            document.getElementById(line).setAttribute("class", "active");
-            document.getElementById(line).scrollIntoView();
+            console.log("jumping to " + line);
+            setLine.apply(this, arguments);
+            track.currentTime = lyrics[line][1];
         }
     </script>
 </body>
