@@ -240,6 +240,6 @@ function download(file, content) {
     document.body.removeChild(element);
 }
 
-container.innerHTML += '<h1><em>App loaded successfully.</em></h1>';
+container.innerHTML += '<h2><em>Application loaded successfully.</em></h2>';
 container.innerHTML += '<h1 class="hl">No song selected</h1>';
 container.innerHTML += '<h1 class="hl">Select a song from the library.</h1>';

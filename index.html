@@ -32,22 +32,11 @@
                 </div>
             </div>
             <div class="row ">
-                <!-- <div class="col-12 col-lg-3 py-3">
-                    <div class="card bg-dark text-white" style="width: 18rem;">
-                        <img class="card-img-top" src="..."> 
-                <div class="card-body">
-                    <h5 class="card-title">Unsynced lyrics</h5>
-                    <p class="card-text mt-2">::song: <b>x</b><br>::by: <b>x</b></p>
-                    <p class="card-text mt-2">Time the lyrics by switching to the sync mode. There, play the song and click a vocal line right when it's sung.</p>
-                    <button data-songname="x" onclick="playSong(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
-                </div>
-            </div>
-        </div> -->
                 <div class="col-12 col-lg-3 py-3">
                     <div class="card bg-dark text-white" style="width: 18rem;">
                         <!-- <img class="card-img-top" src="..."> -->
                         <div class="card-body">
-                            <h5 class="card-title">Lyrics already synced</h5>
+                            <h5 class="card-title">Pre-synced lyrics</h5>
                             <p class="card-text mt-2">::song: <b>Kwiaty</b><br>::by: <b>La Venders</b></p>
                             <p class="card-text mt-2">See the app in action, edit timings as you wish.</p>
                             <button data-songname="szouda_kwiaty" onclick="playSong(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
@@ -58,7 +47,7 @@
                     <div class="card bg-dark text-white" style="width: 18rem;">
                         <!-- <img class="card-img-top" src="..."> -->
                         <div class="card-body">
-                            <h5 class="card-title">Lyrics already synced</h5>
+                            <h5 class="card-title">Pre-synced lyrics</h5>
                             <p class="card-text mt-2">::song: <b>ur my drug i luv u</b><br>::by: <b>hoshie star,
                                     roninkys</b></p>
                             <p class="card-text mt-2">See the app in action, edit timings as you wish.</p>
@@ -72,26 +61,34 @@
     </div>
     <main class="container-fluid">
         <header class="row">
-            <div class="col-12 col-md-6 text-start song order-1 order-lg-0">
-                <p>::song <b id="xsong" class="hl">(not selected)</b></p>
-                <p>::by <b id="xby" class="hl">(not selected)</b></p>
+            <div class="col-12 col-md-6 text-start song order-1 order-lg-0 py-2">
+                <h5>::<b>song</b> <b id="xsong" class="hl"></b></h5>
+                <h5>::<b>by</b> <b id="xby" class="hl"></b></h5>
             </div>
-            <div class="col-12 col-md-6 text-lg-end song order-0 order-lg-1">
+            <div class="col-12 col-md-6 text-lg-end song order-0 order-lg-1 align-self-center">
                 <h6>::app <b>syncdeeznotes</b> ver. 1.4.2.0-ALF</h6>
                 <h6>::dev <b><a href="https://hoshinetsu.moe" target="_blank">@hoshinetsu</a></b>
                 </h6>
             </div>
         </header>
+        <div class="row lyrics-wrapper mt-3 mb-5">
+            <div class="lyrics col-12 col-md-8 offset-md-2">
+                <noscript>
+                    <h1 class="err">Failed: JavaScript disabled.</h1>
+                </noscript>
+            </div>
+        </div>
         <div class="row controls pt-2 pt-md-0">
-            <div class="col-6 col-lg-2 order-0 song ptr flx">
+            <div class="col-6 col-lg-2 order-0 song flx">
                 <div class="modesw">
                     <div class="lock" title="Prevents accidental switching & loss of syncing work">
-                        <label>::mode:lock</label> <input type="checkbox" class="ptr" id="xlock" checked>
+                        <label for="xlock" class="ptr">::mode:lock</label> <input class="form-check-input ptr" style="margin-top:0;" type="checkbox" id="xlock" checked>
                     </div>
                     <div id="mode_pb">
-                        <h4 onclick="modeSwitch()" title="Switch to sync mode"><u>::<b>playback</b>:<b>mode</b></u></h4>
+                        <h4 onclick="modeSwitch()" class="ptr" title="Switch to sync mode">
+                            <u>::<b>playback</b>:<b>mode</b></u></h4>
                     </div>
-                    <div id="mode_sc" class="mode-off" title="Switch to playback mode">
+                    <div id="mode_sc" class="mode-off" class="ptr" title="Switch to playback mode">
                         <h4 onclick="modeSwitch()"><b>sync</b>::<b>mode</b></h4>
                         <a href="javascript:resetTimings()" title="Reset timings">::reset:timings</a>
                     </div>
@@ -111,13 +108,6 @@
                     <h6>::editor</h6>
                     <h4 onclick="dlLyrics()" class="ptr"><u>::<b>save</b>:<b>lyrics</b></u></h4>
                 </div>
-            </div>
-        </div>
-        <div class="row lyrics-wrapper">
-            <div class="lyrics col-12 col-md-8 offset-md-2">
-                <noscript>
-                    <h1 class="err">Failed: JavaScript disabled.</h1>
-                </noscript>
             </div>
         </div>
     </main>

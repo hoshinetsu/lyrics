@@ -33,10 +33,15 @@ main {
 header,
 .controls {
     background-color: #1a1a1a;
+    box-sizing: border-box;
+}
+
+header {
+    border-bottom: 1px solid #666;
 }
 
 .controls {
-    border-bottom: 1px solid #666;
+    border-top: 1px solid #666;
 }
 
 .lyrics-wrapper {
@@ -47,6 +52,7 @@ header,
     word-break: keep-all;
     overflow-y: scroll;
     scroll-behavior: smooth;
+    height: 100vh;
 }
 
 h1 {
@@ -87,6 +93,11 @@ h1:hover {
     font-family: monospace;
 }
 
+.song h5 {
+    line-height: 1.25em;
+    margin: 0;
+}
+
 p {
     line-height: 1.1em;
     margin: 0;
@@ -107,6 +118,11 @@ h6 {
 
 #player {
     width: 100%;
+    text-align: center;
+}
+
+#player a {
+    display: none;
 }
 
 audio {
