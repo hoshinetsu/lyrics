@@ -15,11 +15,42 @@
         <div class="container bg-b">
             <div class="row mt-5 text-center">
                 <div class="col-10 tbar">
-                    <h3>Song library</h3>
+                    <h3>::song:library</h3>
                 </div>
-                <div class="col-2 p-3 cbtn ptr" title="close" onclick="songLib()"> X </div>
+                <button class="col-2 p-3 btn btn-danger" title="close" onclick="songLib()"> X </button>
+            </div>
+            <div class="row py-3 ">
+                <div class="col-12 flex-row">
+                    <h3 class="text-secondary">::preloaded test songs</h3>
+                </div>
+            </div>
+            <div class="row ">
+                <div class="col-12 col-lg-3 py-3">
+                    <div class="card bg-dark text-white" style="width: 18rem;">
+                        <!-- <img class="card-img-top" src="..."> -->
+                        <div class="card-body">
+                            <h5 class="card-title">Unsynced lyrics</h5>
+                            <p class="card-text mt-2">::song: <b>stupid horse</b><br>::by: <b>100 gecs</b></p>
+                            <p class="card-text mt-2">Time the lyrics by switching to the sync mode. There, play the song and click a vocal line right when it's sung.</p>
+                            <button data-songname="stupid_horse" onclick="playSong(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-lg-3 py-3">
+                    <div class="card bg-dark text-white" style="width: 18rem;">
+                        <!-- <img class="card-img-top" src="..."> -->
+                        <div class="card-body">
+                            <h5 class="card-title">Lyrics already synced</h5>
+                            <p class="card-text mt-2">::song: <b>ur my drug i luv u</b><br>::by: <b>hoshie star,
+                                    roninkys</b></p>
+                            <p class="card-text mt-2">See the app in action, edit timings as you wish.</p>
+                            <button data-songname="ur_my_drug_i_luv_u" onclick="playSong(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+    </div>
     </div>
     <main class="container-fluid">
         <header class="row">
@@ -37,43 +68,37 @@
             <div class="col-6 col-lg-2 order-0 song ptr flx">
                 <div class="modesw">
                     <div class="lock" title="Prevents accidental switching & loss of syncing work">
-                        <label>::mode:lock</label> <input type="checkbox" id="xlock" checked>
+                        <label>::mode:lock</label> <input type="checkbox" class="ptr" id="xlock" checked>
                     </div>
                     <div id="mode_pb">
-                        <h4 onclick="modeSwitch()" title="Switch to sync mode"><b>playback</b>::<b>mode</b></h4>
+                        <h4 onclick="modeSwitch()" title="Switch to sync mode"><u>::<b>playback</b>:<b>mode</b></u></h4>
                     </div>
                     <div id="mode_sc" class="mode-off" title="Switch to playback mode">
                         <h4 onclick="modeSwitch()"><b>sync</b>::<b>mode</b></h4>
-                        <a href="javascript:dlLyrics()" title="Export synced lyrics">save::lyrics</a>
+                        <a href="javascript:resetTimings()" title="Reset timings">::reset:timings</a>
                     </div>
                 </div>
             </div>
             <div class="col-12 col-lg-8 order-3 order-lg-1 flx"><audio id="track" controls ontimeupdate="updateTime()">
                 </audio>
-                <!-- <div class="player-container">
-                    <div class="player-blk">
-                        <button id="player-play">></button>
-                        <span id="player-pos">0:00</span>
-                        <input type="range" id="player-seek" max="100" value="0">
-                        <span id="player-len">0:00</span>
-                    </div>
-                    <div class="player-blk">
-                        <span id="player-vol">15</span>
-                        <input type="range" id="player-dial" max="100" value="15">
-                    </div>
-                </div> -->
             </div>
             <div class="col-6 col-lg-2 order-2 order-lg-2 song flx">
-                <div class="modesw">
-                    <h6>::<b>library</b>
-                    </h6>
-                    <a href="javascript:songLib()">select::song</a>
-                    <p class="text-center">for now mp3 & json combo only</p>
+                <div class="modesw" id="lib">
+                    <h6>::library</h6>
+                    <h4 onclick="songLib()" class="ptr"><u>::<b>select</b>:<b>song</b></u></h4>
+                </div>
+                <div class="modesw mode-off" id="edi">
+                    <h6>::editor</h6>
+                    <h4 onclick="dlLyrics()" class="ptr"><u>::<b>save</b>:<b>lyrics</b></u></h4>
                 </div>
             </div>
         </div>
         <div class="row lyrics-wrapper">
-            <div class="lyrics col-12 col-md-8 offset-md-2"></div>
+            <div class="lyrics col-12 col-md-8 offset-md-2">
+                <noscript>
+                    <h1 class="err">Failed: JavaScript disabled.</h1>
+                </noscript>
+            </div>
         </div>
     </main>
     <script src="sdn.app.js"></script>

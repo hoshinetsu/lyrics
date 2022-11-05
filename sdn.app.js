@@ -1,6 +1,6 @@
 const container = document.querySelector(".lyrics");
 const track = document.getElementById("track");
-const urlParams = new URLSearchParams(window.location.search);
+// const urlParams = new URLSearchParams(window.location.search); ne
 
 var song, by;
 var lyrics = [];
@@ -8,10 +8,12 @@ var currentLine = -1;
 var lastLine = -1;
 var syncMode = false;
 var libMode = false;
+var songLoaded = false;
 
 /* no earrapes */
 track.volume = 0.15;
 
+/* opens and closes the song library */
 function songLib() {
     libMode = !libMode;
     if (libMode) {
@@ -21,30 +23,43 @@ function songLib() {
     }
 }
 
+function playSong(trigger) {
+    const name = trigger.getAttribute("data-songname");
+    loadSong(name + ".mp3", name + ".json");
+    songLib()
+    track.play()
+}
+
 /* switch between playback and sync modes */
 async function modeSwitch() {
+    if (!songLoaded) return;
     const lock = document.getElementById("xlock");
     const msc = document.getElementById("mode_sc");
     const mpb = document.getElementById("mode_pb");
+    const lib = document.getElementById("lib");
+    const edi = document.getElementById("edi");
 
 
     if (lock.checked) {
-        alert("Mode is locked to prevent accidental switching.\r\nUnlock current mode and switch again.");
+        alert("Mode is locked to prevent accidental switching.\r\nRemove mode lock and switch again.");
     } else {
+        syncMode = !syncMode;
+        if (syncMode) {
+            mpb.classList.add("mode-off"); // mode playback
+            lib.classList.add("mode-off"); // library tool
+            edi.classList.remove("mode-off"); // editor tool
+            msc.classList.remove("mode-off"); // mode sync
+
+        } else {
+            edi.classList.add("mode-off"); // editor tool
+            msc.classList.add("mode-off"); // mode sync
+            mpb.classList.remove("mode-off"); // mode playback
+            lib.classList.remove("mode-off"); // library tool
+        }
         lock.checked = true;
         track.pause();
         track.currentTime = 0
         setLine(0)
-
-        syncMode = !syncMode;
-        if (syncMode) {
-            msc.setAttribute("class", "mode-on");
-            mpb.setAttribute("class", "mode-off");
-
-        } else {
-            msc.setAttribute("class", "mode-off");
-            mpb.setAttribute("class", "mode-on");
-        }
         for (let x = 0; x < lyrics.length; x++)
             reloadLyrics(x)
     }
@@ -57,21 +72,23 @@ function loadSong(aud, lyr) {
     const xby = document.getElementById("xby");
 
     xsg.textContent = xby.textContent = "loading..";
-    src.setAttribute("src", aud);
+    container.textContent = "";
+    src.setAttribute("src", "songs/" + aud);
     src.setAttribute("type", "audio/mpeg");
     track.pause();
     track.currentTime = 0;
     track.textContent = "";
     track.appendChild(src);
 
-    fetch(lyr).then((response) => response.json()).then(function(json) {
+    fetch("lyrics/" + lyr).then((response) => response.json()).then(function(json) {
         xsg.textContent = song = json.song;
         xby.textContent = by = json.by;
-        lyrics[0] = ["::[play-song]", -0.15];
+        lyrics[0] = ["::[music-start]", -0.15];
         Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
             line[1]
         ]);
         loadLyrics();
+        songLoaded = true;
     }, function(reason) {
         writeLine("err", "error: malformed song JSON");
     });
@@ -88,7 +105,7 @@ function writeLine(id, txt) {
 
 // /* invoke loads an example song */
 // loadSong("ur_my_drug_i_luv_u.mp3", "drugs.json");
-loadSong(urlParams.get('song') + ".mp3", urlParams.get('song') + ".json")
+// loadSong(urlParams.get('song') + ".mp3", urlParams.get('song') + ".json")
 
 /* display the lyrics */
 function loadLyrics() {
@@ -118,6 +135,18 @@ function syncLine(line) {
         lyrics[line][1] = time;
         reloadLyrics(line)
         setLine(Math.min(line, lyrics.length - 1))
+    }
+}
+
+/* remove all timings! */
+function resetTimings() {
+    if (!confirm("You sure? Any unsaved timings will be lost!")) return;
+    track.pause();
+    track.currentTime = 0;
+    setLine(0);
+    for (let x = 1; x < lyrics.length; x++) {
+        lyrics[x][1] = 0;
+        reloadLyrics(x);
     }
 }
 
@@ -166,12 +195,8 @@ function jumpTo(line) {
         if (line == 0) {
             track.currentTime = 0;
             track.play();
-        }
-        let target = line;
-        if (line <= 1 && currentLine <= 1) {
-            target = 1;
-        }
-        syncLine(target);
+        } else
+            syncLine(line);
     } else {
         track.play();
         track.currentTime = lyrics[line][1] + 0.15;
@@ -200,3 +225,7 @@ function download(file, content) {
     element.click();
     document.body.removeChild(element);
 }
+
+container.innerHTML += '<h1><em>App loaded successfully.</em></h1>';
+container.innerHTML += '<h1 class="hl">No song selected</h1>';
+container.innerHTML += '<h1 class="hl">Select a song from the library.</h1>';

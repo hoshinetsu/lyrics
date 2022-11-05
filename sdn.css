@@ -152,7 +152,8 @@ h2 small::before {
     content: ' \2022  ';
 }
 
-#err {
+#err,
+.err {
     color: red;
 }
 
@@ -172,9 +173,10 @@ h2 small::before {
     left: 0;
     width: 100%;
     height: 100%;
-    /* display: flex;
-    align-items: center;
-    justify-content: center; */
+}
+
+h1[id="0"] {
+    font-style: italic;
 }
 
 .bg-a {
@@ -183,7 +185,7 @@ h2 small::before {
 
 .container.bg-b {
     background-color: #222;
-    border-radius: 50px;
+    border-radius: 25px;
 }
 
 .tbar {
@@ -194,7 +196,7 @@ h2 small::before {
 .cbtn {
     background-color: #bb0000;
     transition-duration: 300ms;
-    border-radius: 0 50px 50px 0;
+    border-radius: 0 25px 25px 0;
 }
 
 .cbtn:hover {
