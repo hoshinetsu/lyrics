@@ -97,6 +97,8 @@ function loadSong(aud, lyr) {
     fetch("lyrics/" + lyr).then((response) => response.json()).then(function(json) {
         xsg.textContent = song = json.song;
         xby.textContent = by = json.by;
+        xsg.setAttribute("href", json.promo);
+        xby.setAttribute("href", json.promo);
         lyrics[0] = ["::[music-start]", -0.15];
         Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
             line[1]
@@ -126,6 +128,7 @@ function loadLyrics() {
     for (let x = 0; x < lyrics.length; x++) {
         writeLine(x, lyrics[x][0])
     }
+    writeLine("nil", "nil");
 }
 
 /* play the music and sync lyrics */
