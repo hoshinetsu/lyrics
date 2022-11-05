@@ -12,6 +12,19 @@
             color-scheme: dark;
         }
         
+         ::-webkit-scrollbar {
+            display: block;
+            width: 10px;
+            background-color: #1a1a1a;
+        }
+        
+         ::-webkit-scrollbar-thumb {
+            background-color: #aaa;
+            background-clip: padding-box;
+            border-radius: 9999px;
+            border: 2px solid rgba(0, 0, 0, 0);
+        }
+        
         body {
             background-color: #222;
         }
@@ -32,7 +45,7 @@
         }
         
         .lyrics-wrapper {
-            color: #9a9a9a;
+            color: #7a7a7a;
             font-size: 20px;
             user-select: none;
             word-wrap: normal;
@@ -48,6 +61,12 @@
             width: fit-content;
             cursor: pointer;
             font-weight: bolder;
+            transition-duration: 300ms;
+            text-shadow: 3px 3px 1px #2a2a2a;
+        }
+        
+        h1:hover {
+            text-shadow: 3px 3px 1px #444;
         }
         
         h1[id$='0'] {
@@ -56,6 +75,11 @@
         
         .active {
             color: #eee;
+            text-shadow: 3px 3px 1px #3a3a3a;
+        }
+        
+        .active:hover {
+            text-shadow: 3px 3px 1px #999;
         }
         
         .controls {
@@ -152,9 +176,8 @@
         </div>
     </footer>
     <script>
-        const track = document.getElementById("track");
         const container = document.querySelector(".lyrics");
-        track.volume = 0.25;
+        document.getElementById("track").volume = 0.15;
         var lyrics = [];
         var currentLine = 0;
         var lastLine = 0;
@@ -195,6 +218,7 @@
         }
         /* play the music and sync lyrics */
         function updateTime() {
+            let track = document.getElementById("track");
             while (currentLine < lyrics.length - 1 && track.currentTime >= lyrics[currentLine + 1][1]) {
                 currentLine++;
             }
@@ -207,6 +231,7 @@
         let syncingLine = 0;
         let jsonCode = '{"lyrics":{';
         async function syncLine() {
+            let track = document.getElementById("track");
             if (syncingLine < lyrics.length) {
                 lyrics[syncingLine][1] = track.currentTime;
                 setLine(syncingLine);
@@ -238,14 +263,13 @@
             for (let x = 0; x <= currentLine; x++) {
                 document.getElementById(x).setAttribute("class", "active");
             }
-
-            document.getElementById(currentLine).scrollIntoView();
+            if (currentLine > 0)
+                document.getElementById(currentLine - 1).scrollIntoView();
         }
 
         function jumpTo(line) {
             console.log("jumping to " + line);
-            setLine.apply(this, arguments);
-            track.currentTime = lyrics[line][1];
+            document.getElementById("track").currentTime = lyrics[line][1];
         }
     </script>
 </body>
