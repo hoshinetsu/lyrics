@@ -163,3 +163,40 @@ h2 small::before {
 .lock * {
     vertical-align: middle;
 }
+
+.overlay {
+    z-index: 999;
+    color: white;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    /* display: flex;
+    align-items: center;
+    justify-content: center; */
+}
+
+.bg-a {
+    background-color: #1a1a1ab0;
+}
+
+.container.bg-b {
+    background-color: #222;
+    border-radius: 50px;
+}
+
+.tbar {
+    line-height: 0;
+    align-self: center;
+}
+
+.cbtn {
+    background-color: #bb0000;
+    transition-duration: 300ms;
+    border-radius: 0 50px 50px 0;
+}
+
+.cbtn:hover {
+    background-color: #ee0000;
+}

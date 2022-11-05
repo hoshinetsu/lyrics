@@ -7,9 +7,19 @@ var lyrics = [];
 var currentLine = -1;
 var lastLine = -1;
 var syncMode = false;
+var libMode = false;
 
 /* no earrapes */
 track.volume = 0.15;
+
+function songLib() {
+    libMode = !libMode;
+    if (libMode) {
+        document.getElementById("overlay").classList.remove("mode-off");
+    } else {
+        document.getElementById("overlay").classList.add("mode-off");
+    }
+}
 
 /* switch between playback and sync modes */
 async function modeSwitch() {

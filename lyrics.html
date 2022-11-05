@@ -11,6 +11,16 @@
 </head>
 
 <body>
+    <div id="overlay" class="overlay bg-a mode-off">
+        <div class="container bg-b">
+            <div class="row mt-5 text-center">
+                <div class="col-10 tbar">
+                    <h3>Song library</h3>
+                </div>
+                <div class="col-2 p-3 cbtn ptr" title="close" onclick="songLib()"> X </div>
+            </div>
+        </div>
+    </div>
     <main class="container-fluid">
         <header class="row">
             <div class="col-12 col-md-6 text-start song order-1 order-lg-0">
@@ -57,7 +67,7 @@
                 <div class="modesw">
                     <h6>::<b>library</b>
                     </h6>
-                    <a href="javascript:selectFile()">select::song</a>
+                    <a href="javascript:songLib()">select::song</a>
                     <p class="text-center">for now mp3 & json combo only</p>
                 </div>
             </div>
