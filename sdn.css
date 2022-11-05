@@ -1,0 +1,161 @@
+:root {
+    color-scheme: dark;
+}
+
+::-webkit-scrollbar {
+    display: block;
+    width: 10px;
+    background-color: #1a1a1a;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #aaa;
+    background-clip: padding-box;
+    border-radius: 9999px;
+    border: 2px solid rgba(0, 0, 0, 0);
+}
+
+body {
+    background-color: #222;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100vh;
+}
+
+header,
+.controls {
+    background-color: #1a1a1a;
+}
+
+.controls {
+    border-bottom: 1px solid #666;
+}
+
+.lyrics-wrapper {
+    color: #7a7a7a;
+    font-size: 20px;
+    user-select: none;
+    word-wrap: normal;
+    word-break: keep-all;
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+}
+
+h1 {
+    margin: 10px 0;
+    width: fit-content;
+    cursor: pointer;
+    font-weight: bolder;
+    transition-duration: 300ms;
+    text-shadow: 3px 3px 1px #2a2a2a;
+}
+
+h1:hover {
+    text-shadow: 3px 3px 1px #444;
+}
+
+.active {
+    color: #eee;
+    text-shadow: 3px 3px 1px #3a3a3a;
+}
+
+.active:hover {
+    text-shadow: 3px 3px 1px #999;
+}
+
+.flx {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80px;
+}
+
+.song {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    color: #7a7a7a;
+    font-family: monospace;
+}
+
+.song p {
+    line-height: 1.1em;
+    margin: 0;
+    text-align: inherit;
+}
+
+.song * b {
+    color: #bbb;
+}
+
+h6 {
+    margin: 0;
+}
+
+.mode-off {
+    display: none;
+}
+
+audio {
+    width: 100%;
+}
+
+.ptr {
+    cursor: pointer;
+}
+
+.player-blk {
+    align-self: center;
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    color: #ccc;
+    gap: 10px;
+}
+
+.modesw {
+    text-align: center;
+}
+
+.modesw h4,
+.modesw a {
+    transition-duration: 300ms;
+}
+
+.modesw h4:hover,
+a:hover {
+    color: #eee;
+    text-shadow: 0px 0px 5px #aaa;
+}
+
+a {
+    color: #666;
+}
+
+h2 small {
+    font-size: 0.5em;
+    vertical-align: middle;
+    height: 100%;
+}
+
+h2 small::before {
+    content: ' \2022  ';
+}
+
+#err {
+    color: red;
+}
+
+.lock {
+    display: inline-block;
+}
+
+.lock * {
+    vertical-align: middle;
+}
