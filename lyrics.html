@@ -25,17 +25,8 @@
             border: 2px solid rgba(0, 0, 0, 0);
         }
         
-        body,
-        header,
-        main {
+        body {
             background-color: #222;
-        }
-        
-        header {
-            color: #eee;
-            position: absolute;
-            top: 0;
-            left: 0;
         }
         
         main {
@@ -43,7 +34,15 @@
             flex-direction: column;
             width: 100%;
             height: 100vh;
-            overflow: hidden;
+        }
+        
+        header,
+        .controls {
+            background-color: #1a1a1a;
+        }
+        
+        .controls {
+            border-bottom: 1px solid #666;
         }
         
         .lyrics-wrapper {
@@ -54,8 +53,6 @@
             word-break: keep-all;
             overflow-y: scroll;
             scroll-behavior: smooth;
-            margin-bottom: 120px;
-            margin-top: 80px;
         }
         
         h1 {
@@ -80,24 +77,12 @@
             text-shadow: 3px 3px 1px #999;
         }
         
-        .controls {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            background-color: #1a1a1a;
-            border-top: 1px solid #666;
-        }
-        
-        .controls .flx {
-            height: 100px;
+        .flx {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-        }
-        
-        #syncButton {
-            padding: 15px;
+            height: 80px;
         }
         
         .song {
@@ -111,7 +96,7 @@
         .song p {
             line-height: 1.1em;
             margin: 0;
-            text-align: left;
+            text-align: inherit;
         }
         
         .song * b {
@@ -125,8 +110,6 @@
         .mode-off {
             display: none;
         }
-        
-        .mode-on {}
         
         audio {
             width: 100%;
@@ -156,11 +139,12 @@
         }
         
         .modesw h4:hover,
-        .modesw a:hover {
+        a:hover {
+            color: #eee;
             text-shadow: 0px 0px 5px #aaa;
         }
         
-        .modesw a {
+        a {
             color: #666;
         }
         
@@ -189,30 +173,24 @@
 </head>
 
 <body>
-    <header class="container-fluid">
-        <div class="row">
-            <div class="col-12 col-md-6 text-start song">
+    <main class="container-fluid">
+        <header class="row">
+            <div class="col-12 col-md-6 text-start song order-1 order-lg-0">
                 <p>::song <b id="xsong"></b></p>
                 <p>::by <b id="xby"></b>
             </div>
-            <div class="col-12 col-md-6 text-end song">
+            <div class="col-12 col-md-6 text-lg-end song order-0 order-lg-1">
                 <h6>::app <b>syncdeeznotes</b> ver. 1.4.2.0-ALF</h6>
-                <h6>::dev <b><a href="https://hoshinetsu.moe" class="text-secondary" target="_blank">@hoshinetsu</a></b>
+                <h6>::dev <b><a href="https://hoshinetsu.moe" target="_blank">@hoshinetsu</a></b>
                 </h6>
             </div>
-        </div>
-    </header>
-    <main class="container">
-        <div class="row lyrics-wrapper">
-            <div class="lyrics col-12"></div>
-        </div>
-    </main>
-    <footer class="container-fluid controls">
-        <div class="row px-5">
-            <div class="col-2 song ptr flx">
+        </header>
+        <div class="row controls pt-2 pt-md-0">
+            <div class="col-6 col-lg-2 order-0 song ptr flx">
                 <div class="modesw">
-                    <div class="lock" title="Prevents accidental switching & loss of syncing work"><label>::lock current
-                            mode:</label>&nbsp;<input type="checkbox" id="xlock" checked></div>
+                    <div class="lock" title="Prevents accidental switching & loss of syncing work">
+                        <label>::mode:lock</label> <input type="checkbox" id="xlock" checked>
+                    </div>
                     <div id="mode_pb">
                         <h4 onclick="modeSwitch()" title="Switch to sync mode"><b>playback</b>::<b>mode</b></h4>
                     </div>
@@ -222,7 +200,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-8 flx"><audio id="track" controls ontimeupdate="updateTime()">
+            <div class="col-12 col-lg-8 order-3 order-lg-1 flx"><audio id="track" controls ontimeupdate="updateTime()">
                     <source src="ur_my_drug_i_luv_u.mp3" type="audio/mpeg">
                 </audio>
                 <!-- <div class="player-container">
@@ -238,9 +216,19 @@
                     </div>
                 </div> -->
             </div>
-            <div class="col-2 song flx">meow meow</div>
+            <div class="col-6 col-lg-2 order-2 order-lg-2 song flx">
+                <div class="modesw">
+                    <h6>::<b>library</b>
+                    </h6>
+                    <a href="javascript:selectFile()">select::song</a>
+                    <p class="text-center">for now mp3 & json combo only</p>
+                </div>
+            </div>
         </div>
-    </footer>
+        <div class="row lyrics-wrapper">
+            <div class="lyrics col-12 col-md-8 offset-md-2"></div>
+        </div>
+    </main>
     <script>
         const container = document.querySelector(".lyrics");
         const track = document.getElementById("track");
@@ -351,9 +339,10 @@
         }
 
         function scrollToLine(line) {
-            let pct = line - 1;
-            const box = document.querySelector('.lyrics-wrapper');
-            box.scroll(0, pct * 48)
+            // let pct = line - 1;
+            // const box = document.querySelector('.lyrics-wrapper');
+            // box.scroll(0, pct * 48)
+            document.getElementById(Math.max(0, line - 1)).scrollIntoView();
         }
 
         function updateLyricsDisplay() {
