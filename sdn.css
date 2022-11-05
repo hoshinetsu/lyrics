@@ -203,7 +203,7 @@ h2 small::before {
 }
 
 .overlay {
-    z-index: 999;
+    z-index: 10000;
     color: white;
     position: absolute;
     top: 0;
