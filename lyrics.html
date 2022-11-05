@@ -177,6 +177,14 @@
         #err {
             color: red;
         }
+        
+        .lock {
+            display: inline-block;
+        }
+        
+        .lock * {
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -203,6 +211,8 @@
         <div class="row px-5">
             <div class="col-2 song ptr flx">
                 <div class="modesw">
+                    <div class="lock" title="Prevents accidental switching & loss of syncing work"><label>::lock current
+                            mode:</label>&nbsp;<input type="checkbox" id="xlock" checked></div>
                     <div id="mode_pb">
                         <h4 onclick="modeSwitch()" title="Switch to sync mode"><b>playback</b>::<b>mode</b></h4>
                     </div>
@@ -210,7 +220,6 @@
                         <h4 onclick="modeSwitch()"><b>sync</b>::<b>mode</b></h4>
                         <a href="javascript:getJson()" title="Export synced lyrics">save::lyrics</a>
                     </div>
-                    </p>
                 </div>
             </div>
             <div class="col-8 flx"><audio id="track" controls ontimeupdate="updateTime()">
@@ -243,22 +252,27 @@
         var lastLine = -1;
         var syncMode = false;
 
-        function modeSwitch() {
-            track.pause();
-            track.currentTime = 0
-            setLine(0)
-
-            syncMode = !syncMode;
-            if (syncMode) {
-                document.getElementById("mode_sc").setAttribute("class", "mode-on");
-                document.getElementById("mode_pb").setAttribute("class", "mode-off");
-
+        async function modeSwitch() {
+            if (document.getElementById("xlock").checked) {
+                alert("Mode is locked to prevent accidental switching.\r\nUnlock current mode and switch again.");
             } else {
-                document.getElementById("mode_sc").setAttribute("class", "mode-off");
-                document.getElementById("mode_pb").setAttribute("class", "mode-on");
+                document.getElementById("xlock").checked = true;
+                track.pause();
+                track.currentTime = 0
+                setLine(0)
+
+                syncMode = !syncMode;
+                if (syncMode) {
+                    document.getElementById("mode_sc").setAttribute("class", "mode-on");
+                    document.getElementById("mode_pb").setAttribute("class", "mode-off");
+
+                } else {
+                    document.getElementById("mode_sc").setAttribute("class", "mode-off");
+                    document.getElementById("mode_pb").setAttribute("class", "mode-on");
+                }
+                for (let x = 0; x < lyrics.length; x++)
+                    reloadLyrics(x)
             }
-            for (let x = 0; x < lyrics.length; x++)
-                reloadLyrics(x)
         }
 
         /* load lyrics file */
@@ -266,7 +280,7 @@
             fetch(file).then((response) => response.json()).then(function(json) {
                 document.getElementById("xsong").innerHTML = song = json.song;
                 document.getElementById("xby").innerHTML = by = json.by;
-                lyrics[0] = ["::[play-song]", 0];
+                lyrics[0] = ["::[play-song]", -0.15];
                 Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
                     line[1]
                 ]);
@@ -339,7 +353,7 @@
         function scrollToLine(line) {
             let pct = line - 1;
             const box = document.querySelector('.lyrics-wrapper');
-            box.scroll(0, pct * 48 - 240)
+            box.scroll(0, pct * 48)
         }
 
         function updateLyricsDisplay() {
@@ -368,7 +382,7 @@
                 syncLine(target);
             } else {
                 track.play();
-                track.currentTime = lyrics[line][1];
+                track.currentTime = lyrics[line][1] + 0.15;
             }
         }
 
