@@ -17,6 +17,7 @@ var syncMode = false;
 var libMode = false;
 var songLoaded = false;
 var track = document.getElementById("track");
+localStorage.setItem("volume", 0.15);
 
 /* opens and closes the song library */
 function songLib() {
@@ -35,9 +36,9 @@ function playSongByName(trigger) {
 }
 
 /* switch between playback and sync modes */
-async function modeSwitch() {
+async function modeSwitch(override) {
     if (!songLoaded) return;
-    if (lock.checked) {
+    if (!override && lock.checked) {
         alert("Mode is locked to prevent accidental switching.\r\nRemove mode lock and switch again.");
     } else {
         syncMode = !syncMode;
@@ -65,17 +66,16 @@ async function modeSwitch() {
 /* add the audio tag */
 function createTrack(source) {
     player.innerHTML = "";
-    var a = document.createElement("audio");
-    a.volume = 0.15; /* no earrapes */
-    a.setAttribute("controls", "");
-    a.setAttribute("id", "track");
-    a.setAttribute("ontimeupdate", "updateTime()");
+    track = document.createElement("audio");
+    track.volume = localStorage.getItem("volume"); /* no earrapes */
+    track.setAttribute("controls", "");
+    track.setAttribute("id", "track");
+    track.setAttribute("ontimeupdate", "updateTime()");
     var b = document.createElement("source");
     b.setAttribute("src", source);
     b.setAttribute("type", "audio/mpeg");
-    a.appendChild(b);
-    player.appendChild(a);
-    return a;
+    track.appendChild(b);
+    player.appendChild(track);
 }
 
 /* create a lyric line in the container */
@@ -87,54 +87,51 @@ function writeLine(id, txt) {
     container.appendChild(line);
 }
 
-/* display the lyrics */
-function loadLyrics() {
+function clearLyrics(song, by, promo) {
     currentLine = lastLine = -1;
+    lyrics = [];
+    lyrics[0] = ["::[music-start]", -0.15];
+    container.innerHTML = "";
+    document.getElementById("song").classList.remove("yeet");
+    document.getElementById("by").classList.remove("yeet");
+    xsg.textContent = xby.textContent = "loading..";
+    xsg.textContent = this.song = song;
+    xby.textContent = this.by = by;
+    if (promo) {
+        xsg.setAttribute("href", promo);
+        xby.setAttribute("href", promo);
+    } else {
+        xsg.removeAttribute("href");
+        xby.removeAttribute("href");
+    }
+}
+
+/* display the lyrics */
+function displayLyrics(autoplay) {
     for (let x = 0; x < lyrics.length; x++) {
         writeLine(x, lyrics[x][0])
     }
     writeLine("nil", "endl");
-}
-
-function parseJson(json) {
-    xsg.textContent = song = json.song;
-    xby.textContent = by = json.by;
-    xsg.setAttribute("href", json.promo);
-    xby.setAttribute("href", json.promo);
-    lyrics[0] = ["::[music-start]", -0.15];
-    Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
-        line[1]
-    ]);
-    loadLyrics();
-    track.play()
+    if (autoplay)
+        track.play()
     songLoaded = true;
 }
 
-function parseMp3(mp3) {
-    document.getElementById("song").classList.remove("yeet");
-    document.getElementById("by").classList.remove("yeet");
-    xsg.textContent = xby.textContent = "loading..";
-    container.innerHTML = "";
-    track = createTrack(mp3);
-    lyrics = [];
+function parseJson(json) {
+    clearLyrics(json.song, json.by, json.promo)
+    Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
+        line[1]
+    ]);
+    displayLyrics(true);
 }
 
 /* load the song files */
 function loadSongOffURL(id) {
     const path = "songs/" + id + "/" + id;
-    parseMp3(path + ".mp3");
+    createTrack(path + ".mp3");
     fetch(path + ".json").then((response) => response.json()).then((response) => parseJson(response), function(reason) {
         writeLine("err", "error: malformed song JSON");
     });
-}
-
-function loadSongOffBlob(name) {
-    if (localStorage.getItem(name)) {
-        parseMp3(localStorage.getItem(name + "-mp3"));
-        parseJson(localStorage.getItem(name + "-json"));
-        return;
-    }
-    console.error(name + " not in blob");
 }
 
 /* play the music and sync lyrics */
@@ -232,15 +229,15 @@ function e(i) {
 }
 
 /* serialize the lyrics into json format */
-function serializeJson() {
+function serializeLyrics() {
     let json = [];
     json.push('{', '"song":"', song, '","by":"', by, '","lyrics":', JSON.stringify(lyrics.slice(1)), '}');
     return json.join("");
 }
 
 /* saves lyrics to a text file*/
-function dlLyrics() {
-    download("sdn lyrics for " + song + ".json", serializeJson())
+function serializeJSON() {
+    download(song.replaceAll(" ", "_").toLowerCase() + "_" + by.replaceAll(" ", "_").toLowerCase() + ".json", serializeLyrics())
 }
 
 /* download string as text file */
@@ -279,28 +276,37 @@ function blobify(url, mime, name) {
     xhr.send();
 }
 
-function storeFileLocally(file, name) {
-    if (!file) {
-        console.error("Attempted to store a non-existent file!");
-        return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(evt) {
-        try {
-            localStorage.setItem(name, target.result);
-        } catch (e) {
-            console.error("Storage failed: " + e);
+/* saves imported song to the library */
+function saveSongToLS(file, id) {
+    const data = URL.createObjectURL(file);
+    // localStorage.setItem("")
+    return data;
+}
+
+function importLyrics(song, by, ptext) {
+    clearLyrics(song, by, null)
+    let lines = ptext.trim().split("\n")
+    let counter = 0;
+    for (let x = 0; x < lines.length; x++) {
+        let line = [lines[x].trim(), x * 5]
+        if (line[0].length > 0) {
+            counter++;
+            lyrics[counter] = line;
         }
-    };
-    reader.readAsDataURL(file);
+    }
 }
 
-/* this is hard. */
+/* this is hard. its not that hard. */
 function importSong() {
-    storeFileLocally(document.getElementById("ifm-file").files[0], "");
+    const musFile = document.getElementById("ifm-file").files[0];
+    importLyrics(document.getElementById("ifm-song").value, document.getElementById("ifm-by").value, document.getElementById("ifm-lyrics").value);
+    createTrack(saveSongToLS(musFile, null));
+    displayLyrics(false);
+    songLib();
+    modeSwitch(true);
 }
 
-/* greet the endpoint if the script loaded correctly */
+/* greet endpoint if the script has loaded correctly */
 container.innerHTML += '<h2><em>application loaded successfully</em></h2>';
 container.innerHTML += '<h1 class="hl">no song selected</h1>';
 container.innerHTML += '<h1 class="hl">select a song from the library</h1>';

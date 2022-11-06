@@ -57,7 +57,7 @@
                 </div>
             </div>
             <div class="row">
-                <h3>::<b>import</b>:<b>a</b>:<b>song</b></h3>
+                <h3>::<b>import</b>:<b>and time</b>:<b>a song</b></h3>
             </div>
             <div class="row justify-content-center mb-3">
                 <div class="col-12 col-lg-6 offset-lg-0">
@@ -65,21 +65,21 @@
                         <div class="card-body">
                             <form class="form" action="javascript:importSong()">
                                 <div class="form-group">
-                                    <label for="ifm-title">Title:</label><input class="form-control" id="ifm-title" requried type="text" name="title" placeholder="whiskey my waifu..">
+                                    <label for="ifm-title">Title:</label><input class="form-control" id="ifm-song" requried type="text" placeholder="whiskey my waifu..">
                                 </div>
                                 <div class="form-group">
-                                    <label for="ifm-by">Performers:</label><input class="form-control" id="ifm-by" required type="text" name="by" placeholder="daddy dream">
+                                    <label for="ifm-by">Performers:</label><input class="form-control" id="ifm-by" required type="text" placeholder="daddy dream">
                                 </div>
                                 <div class="form-group">
                                     <label for="ifm-lyrics">MP3 file:</label>
-                                    <input class="form-control" id="ifm-file" type="file" required name="file">
+                                    <input class="form-control" id="ifm-file" type="file" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ifm-lyrics">Lyrics (unsynced words, line by line)</label>
-                                    <textarea class="form-control" id="ifm-lyrics" type="text" required name="lyrics" placeholder="" rows="20"></textarea>
+                                    <label for="ifm-lyrics">Lyrics (each line in new line plz)<br>empty lines will get removed</label>
+                                    <textarea class="form-control" id="ifm-lyrics" type="text" required rows="5"></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ifm-lyrics">Ready? Pray the app won't crash XD</label>
+                                    <label for="ifm-lyrics">Ready? Hit the meowgic button</label>
                                     <button class="form-control btn btn-secondary">Import</button>
                                 </div>
                             </form>
@@ -115,12 +115,12 @@
                         <label for="xlock" class="ptr">::mode:lock</label> <input class="form-check-input ptr" style="margin-top:0;" type="checkbox" id="xlock" checked>
                     </div>
                     <div id="mode_pb">
-                        <h4 onclick="modeSwitch()" class="ptr" title="Switch to sync mode">
+                        <h4 onclick="modeSwitch(false)" class="ptr" title="Switch to sync mode">
                             <u>::<b>playback</b>:<b>mode</b></u>
                         </h4>
                     </div>
                     <div id="mode_sc" class="mode-off ptr" title="Switch to playback mode">
-                        <h4 onclick="modeSwitch()"><u>::<b>sync</b>:<b>mode</b></u></h4>
+                        <h4 onclick="modeSwitch(false)"><u>::<b>sync</b>:<b>mode</b></u></h4>
                     </div>
                 </div>
             </div>
@@ -137,7 +137,7 @@
                 <div class="modesw mode-off" id="edi">
                     <label>::editor</label>
                     <div class="flx">
-                        <a href="javascript:dlLyrics()" title="Save lyrics as .json">::<b>save</b>:<b>lyrics</b></a>
+                        <a href="javascript:serializeJSON()" title="Save lyrics as .json">::<b>save</b>:<b>lyrics</b></a>
                         <a href="javascript:resetTimings()" title="Reset timings">::<b>reset</b>:<b>timings</b></a>
                     </div>
                 </div>
