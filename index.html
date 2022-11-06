@@ -58,15 +58,19 @@
                 <div class="col-12 col-lg-6 offset-lg-0 mb-3 mb-lg-0">
                     <div class="card bg-dark text-white">
                         <div class="card-body">
-                            <h3 class="card-title">::<b>open</b>:<code>sdn</code>:<b>file</b></h3>
+                            <h3 class="card-title">::<b>open</b>::<b>a-song</b></h3>
                             <form class="form" action="javascript:openSdn()">
                                 <div class="form-group">
-                                    <label for="ifm-lyrics">SDN file:</label>
-                                    <input class="form-control" id="sdn-file" type="file" required>
+                                    <label for="ifm-lyrics">MP3 file:</label>
+                                    <input class="form-control" id="o-sdn" type="file" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ifm-lyrics"></label>
-                                    <button class="form-control btn btn-secondary">Open</button>
+                                    <label for="ifm-lyrics">JSON file:</label>
+                                    <input class="form-control" id="o-json" type="file" required>
+                                </div>
+                                <div class="form-group d-flex align-items-center justify-content-center mt-2" style="gap:10px">
+                                    <button class="btn btn-secondary" type="submit">Open</button>
+                                    <button class=" btn btn-secondary" type="reset">Deselect</button>
                                 </div>
                             </form>
                         </div>

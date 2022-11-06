@@ -72,7 +72,6 @@ function createTrack(source) {
     player.innerHTML = "";
     track = document.createElement("audio");
     track.volume = localStorage.getItem("volume"); /* no earrapes */
-    track.setAttribute("controls", "");
     track.addEventListener('timeupdate', (event) => {
         updateTime();
     });
@@ -132,14 +131,16 @@ function parseJson(json) {
     Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
         line[1]
     ]);
-    displayLyrics(true);
 }
 
 /* load the song files */
 function loadSongOffURL(id) {
     const path = "songs/" + id + "/" + id;
     createTrack(path + ".mp3");
-    fetch(path + ".json").then((response) => response.json()).then((response) => parseJson(response), function(reason) {
+    fetch(path + ".json").then((response) => response.json()).then(function(response) {
+        parseJson(response);
+        displayLyrics(true);
+    }, function(reason) {
         writeLine("err", "error: malformed song JSON");
     });
 }
@@ -199,19 +200,31 @@ function setLine(line) {
 
 /* scroll a line into viewport */
 function scrollToLine(line) {
-    document.getElementById(Math.max(0, line - 1)).scrollIntoView();
+    // document.getElementById(Math.max(0, line - 1)).scrollIntoView();
+    document.getElementById(line).scrollIntoView({ block: "center" });
 }
 
 /* highlight active lines */
 function updateLyricsDisplay() {
+    let element;
     for (let x = lyrics.length - 1; x >= currentLine; x--) {
-        document.getElementById(x).removeAttribute("class");
+        element = document.getElementById(x);
+        element.removeAttribute("class");
+        if (x == currentLine) {
+            element.classList.add("ongoing");
+        }
         if (syncMode) {
             reloadLyrics(x);
         }
     }
     for (let x = 0; x <= currentLine; x++) {
-        document.getElementById(x).setAttribute("class", "active");
+        element = document.getElementById(x);
+        if (x == currentLine) {
+            element.classList.add("ongoing");
+        } else {
+            element.classList.remove("ongoing");
+            element.classList.add("active");
+        }
         if (syncMode) {
             reloadLyrics(x);
         }
@@ -263,10 +276,7 @@ function download(file, blob) {
 }
 
 /* saves imported song to the library */
-function saveSongToLS(file, id) {
-    const data = URL.createObjectURL(file);
-    // localStorage.setItem("")
-    return data;
+function saveSongToLS(mp3, json) {;
 }
 
 /* converts lyrics to JSON format for synchronization */
@@ -285,12 +295,37 @@ function importLyrics(song, by, ptext) {
 
 /* this was hard. before i met blob. */
 function importSong() {
-    const musFile = document.getElementById("ifm-file").files[0];
+    const theFile = document.getElementById("ifm-file").files[0];
+    if (!theFile.type.startsWith("audio/")) {
+        alert("Error: " + theFile.name + " is not an audio file.");
+        return;
+    }
     importLyrics(document.getElementById("ifm-song").value, document.getElementById("ifm-by").value, document.getElementById("ifm-lyrics").value);
-    createTrack(saveSongToLS(musFile, null));
+    createTrack(URL.createObjectURL(theFile));
     displayLyrics(false);
     songLib();
     modeSwitch(true);
+}
+
+/* open the sdn file */
+function openSdn() {
+    const mp3 = document.getElementById("o-sdn").files[0];
+    const json = document.getElementById("o-json").files[0];
+    if (!mp3.type.startsWith("audio/")) {
+        alert("Error: " + mp3.name + " is not an audio file.");
+        return;
+    } else if (!json.type.startsWith("application/json")) {
+        alert("Error: " + json.name + " is not a JSON file.");
+        return;
+    }
+    let read = new FileReader();
+    read.onload = function(event) {
+        parseJson(JSON.parse(event.target.result));
+        createTrack(URL.createObjectURL(mp3));
+        displayLyrics(true);
+        songLib();
+    }
+    read.readAsText(json);
 }
 
 /* autoplay the song from url params */

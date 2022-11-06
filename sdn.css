@@ -68,7 +68,7 @@ header {
 }
 
 .lyrics-wrapper {
-    color: #7a7a7a;
+    color: #696969;
     font-family: Nunito, sans-serif;
     font-size: 20px;
     user-select: none;
@@ -94,8 +94,13 @@ h1:hover {
 }
 
 .active {
-    color: #dedede;
-    text-shadow: 3px 3px 1px #3a3a3a;
+    color: #bababa;
+    text-shadow: 3px 3px 1px #444;
+}
+
+.ongoing {
+    color: #eee;
+    text-shadow: 3px 3px 1px #666;
 }
 
 .active:hover {
