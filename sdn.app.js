@@ -3,6 +3,13 @@
 /* constant fields */
 const container = document.querySelector(".lyrics");
 const player = document.getElementById("player");
+const xsg = document.getElementById("xsong");
+const xby = document.getElementById("xby");
+const lock = document.getElementById("xlock");
+const msc = document.getElementById("mode_sc");
+const mpb = document.getElementById("mode_pb");
+const lib = document.getElementById("lib");
+const edi = document.getElementById("edi");
 
 /* needed variables */
 var song, by, currentLine, lastLine, lyrics;
@@ -15,29 +22,21 @@ var track = document.getElementById("track");
 function songLib() {
     libMode = !libMode;
     if (libMode) {
-        document.getElementById("overlay").classList.remove("mode-off");
+        document.getElementById("overlay").removeAttribute("style");
     } else {
-        document.getElementById("overlay").classList.add("mode-off");
+        document.getElementById("overlay").setAttribute("style", "display:none");
     }
 }
 
 /* play a song from library */
-function playSong(trigger) {
-    const name = trigger.getAttribute("data-songname");
-    loadSong(name + ".mp3", name + ".json");
+function playSongByName(trigger) {
+    loadSongOffURL(trigger.getAttribute("data-songname"));
     songLib()
-    track.play()
 }
 
 /* switch between playback and sync modes */
 async function modeSwitch() {
     if (!songLoaded) return;
-    const lock = document.getElementById("xlock");
-    const msc = document.getElementById("mode_sc");
-    const mpb = document.getElementById("mode_pb");
-    const lib = document.getElementById("lib");
-    const edi = document.getElementById("edi");
-
     if (lock.checked) {
         alert("Mode is locked to prevent accidental switching.\r\nRemove mode lock and switch again.");
     } else {
@@ -97,30 +96,45 @@ function loadLyrics() {
     writeLine("nil", "endl");
 }
 
-/* load the song files */
-function loadSong(aud, lyr) {
+function parseJson(json) {
+    xsg.textContent = song = json.song;
+    xby.textContent = by = json.by;
+    xsg.setAttribute("href", json.promo);
+    xby.setAttribute("href", json.promo);
+    lyrics[0] = ["::[music-start]", -0.15];
+    Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
+        line[1]
+    ]);
+    loadLyrics();
+    track.play()
+    songLoaded = true;
+}
+
+function parseMp3(mp3) {
     document.getElementById("song").classList.remove("yeet");
     document.getElementById("by").classList.remove("yeet");
-    const xsg = document.getElementById("xsong");
-    const xby = document.getElementById("xby");
     xsg.textContent = xby.textContent = "loading..";
     container.innerHTML = "";
-    track = createTrack("songs/" + aud);
+    track = createTrack(mp3);
     lyrics = [];
-    fetch("lyrics/" + lyr).then((response) => response.json()).then(function(json) {
-        xsg.textContent = song = json.song;
-        xby.textContent = by = json.by;
-        xsg.setAttribute("href", json.promo);
-        xby.setAttribute("href", json.promo);
-        lyrics[0] = ["::[music-start]", -0.15];
-        Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
-            line[1]
-        ]);
-        loadLyrics();
-        songLoaded = true;
-    }, function(reason) {
+}
+
+/* load the song files */
+function loadSongOffURL(id) {
+    const path = "songs/" + id + "/" + id;
+    parseMp3(path + ".mp3");
+    fetch(path + ".json").then((response) => response.json()).then((response) => parseJson(response), function(reason) {
         writeLine("err", "error: malformed song JSON");
     });
+}
+
+function loadSongOffBlob(name) {
+    if (localStorage.getItem(name)) {
+        parseMp3(localStorage.getItem(name + "-mp3"));
+        parseJson(localStorage.getItem(name + "-json"));
+        return;
+    }
+    console.error(name + " not in blob");
 }
 
 /* play the music and sync lyrics */
@@ -238,6 +252,52 @@ function download(file, content) {
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
+}
+
+/* save URL to Local Storage using blob */
+function blobify(url, mime, name) {
+    var xhr = new XMLHttpRequest(),
+        blob, fileReader = new FileReader();
+    xhr.open("GET", url, true);
+    xhr.responseType = "arraybuffer";
+
+    xhr.addEventListener("load", function() {
+        if (xhr.status === 200) {
+            blob = new Blob([xhr.response], { type: mime });
+            fileReader.onload = function(evt) {
+                var result = evt.target.result;
+                loadSong();
+                try {
+                    localStorage.setItem(name, result);
+                } catch (e) {
+                    console.log("Storage failed: " + e);
+                }
+            };
+            fileReader.readAsDataURL(blob);
+        }
+    }, false);
+    xhr.send();
+}
+
+function storeFileLocally(file, name) {
+    if (!file) {
+        console.error("Attempted to store a non-existent file!");
+        return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(evt) {
+        try {
+            localStorage.setItem(name, target.result);
+        } catch (e) {
+            console.error("Storage failed: " + e);
+        }
+    };
+    reader.readAsDataURL(file);
+}
+
+/* this is hard. */
+function importSong() {
+    storeFileLocally(document.getElementById("ifm-file").files[0], "");
 }
 
 /* greet the endpoint if the script loaded correctly */

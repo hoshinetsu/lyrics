@@ -18,46 +18,76 @@
 </head>
 
 <body>
-    <div id="overlay" class="overlay bg-a mode-off">
-        <div class="container bg-b">
-            <div class="row mt-5 text-center">
-                <div class="col-10 tbar">
-                    <h3>::song:library</h3>
-                </div>
-                <button class="col-2 p-3 btn btn-danger" title="close" onclick="songLib()"> X </button>
+    <div id="overlay" class="overlay bg-a" style="display:none">
+        <div class="container">
+            <div class="row align-items-center frame-top sticky-top">
+                <h3 class="col-3 m-0">::<b>song</b>:<b>library</b>
+                </h3>
+                <button class="offset-7 offset-lg-8 col-2 col-lg-1 p-3 p-lg-1 py-lg-2 btn btn-danger norad thicc" title="close" onclick="songLib()"> X </button>
             </div>
-            <div class="row py-3 ">
-                <div class="col-12 flex-row">
-                    <h3 class="text-secondary">::preloaded test songs</h3>
-                </div>
+        </div>
+        <div class="container bg-b pt-1">
+            <div class="row">
+                <h3>::<b>preloaded</b>:<b>d<abbr
+                            title="get the fuq away me busy cutting myself">emo</abbr></b>:<b>songs</b>
+                </h3>
             </div>
-            <div class="row ">
-                <div class="col-12 col-lg-3 py-3">
-                    <div class="card bg-dark text-white" style="width: 18rem;">
+            <div class="row justify-content-center mb-3">
+                <div class="col-8 col-lg-3">
+                    <div class="card bg-dark text-white" style="width: 20rem;">
                         <!-- <img class="card-img-top" src="..."> -->
                         <div class="card-body">
                             <h5 class="card-title">Pre-synced lyrics</h5>
                             <p class="card-text mt-2">::song: <b>Kwiaty</b><br>::by: <b>La Venders</b></p>
                             <p class="card-text mt-2">See the app in action, edit timings as you wish.</p>
-                            <button data-songname="szouda_kwiaty" onclick="playSong(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
+                            <button data-songname="szouda_kwiaty" onclick="playSongByName(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 col-lg-3 py-3">
-                    <div class="card bg-dark text-white" style="width: 18rem;">
-                        <!-- <img class="card-img-top" src="..."> -->
+                <div class="col-8 pt-3 pt-lg-0 col-lg-3">
+                    <div class="card bg-dark text-white" style="width: 20rem;">
                         <div class="card-body">
                             <h5 class="card-title">Pre-synced lyrics</h5>
                             <p class="card-text mt-2">::song: <b>ur my drug i luv u</b><br>::by: <b>hoshie star,
                                     roninkys</b></p>
                             <p class="card-text mt-2">See the app in action, edit timings as you wish.</p>
-                            <button data-songname="ur_my_drug_i_luv_u" onclick="playSong(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
+                            <button data-songname="ur_my_drug_i_luv_u" onclick="playSongByName(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h3>::<b>import</b>:<b>a</b>:<b>song</b></h3>
+            </div>
+            <div class="row justify-content-center mb-3">
+                <div class="col-12 col-lg-6 offset-lg-0">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <form class="form" action="javascript:importSong()">
+                                <div class="form-group">
+                                    <label for="ifm-title">Title:</label><input class="form-control" id="ifm-title" requried type="text" name="title" placeholder="whiskey my waifu..">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ifm-by">Performers:</label><input class="form-control" id="ifm-by" required type="text" name="by" placeholder="daddy dream">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ifm-lyrics">MP3 file:</label>
+                                    <input class="form-control" id="ifm-file" type="file" required name="file">
+                                </div>
+                                <div class="form-group">
+                                    <label for="ifm-lyrics">Lyrics (unsynced words, line by line)</label>
+                                    <textarea class="form-control" id="ifm-lyrics" type="text" required name="lyrics" placeholder="" rows="20"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ifm-lyrics">Ready? Pray the app won't crash XD</label>
+                                    <button class="form-control btn btn-secondary">Import</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
     </div>
     <main class="container-fluid">
         <header class="row">
