@@ -7,7 +7,7 @@
     <meta name="AdsBot-Google" content="noindex">
     <meta name="googlebot-news" content="noindex">
     <meta name="google" content="notranslate">
-    <meta name="description" content="SyncDeezNotes -test build. A very musical webapp. Not as musical as tiktok before rebranding tho kekw">
+    <meta name="description" content="SyncDeezNotes -test build. a very musical webapp. not as musical as tiktok before rebranding tho :kekw: // rawr at emchu uwu xd">
     <meta name="author" content="hoshinetsu">
     <title>syncdeeznotes | hoshinetsu</title>
     <link rel="Shortcut Icon" href="/favicon.ico">
@@ -33,36 +33,49 @@
                 </h3>
             </div>
             <div class="row justify-content-center mb-3">
-                <div class="col-8 col-lg-3">
+                <div class="col-12 col-lg-3">
                     <div class="card bg-dark text-white" style="width: 20rem;">
                         <!-- <img class="card-img-top" src="..."> -->
                         <div class="card-body">
                             <h5 class="card-title">Pre-synced lyrics</h5>
                             <p class="card-text mt-2">::song: <b>Kwiaty</b><br>::by: <b>La Venders</b></p>
-                            <p class="card-text mt-2">See the app in action, edit timings as you wish.</p>
                             <button data-songname="szouda_kwiaty" onclick="playSongByName(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
                         </div>
                     </div>
                 </div>
-                <div class="col-8 pt-3 pt-lg-0 col-lg-3">
-                    <div class="card bg-dark text-white" style="width: 20rem;">
+                <div class="col-12 pt-3 pt-lg-0 col-lg-3">
+                    <div class="card bg-dark text-white" style="width: 25rem;">
                         <div class="card-body">
                             <h5 class="card-title">Pre-synced lyrics</h5>
-                            <p class="card-text mt-2">::song: <b>ur my drug i luv u</b><br>::by: <b>hoshie star,
-                                    roninkys</b></p>
-                            <p class="card-text mt-2">See the app in action, edit timings as you wish.</p>
-                            <button data-songname="ur_my_drug_i_luv_u" onclick="playSongByName(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
+                            <p class="card-text mt-2">::song: <b>The Dragon Hunters Song</b><br>::by: <b>The Cure</b>
+                            </p>
+                            <button data-songname="the_dh_song" onclick="playSongByName(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <h3>::<b>import</b>:<b>and time</b>:<b>a song</b></h3>
-            </div>
             <div class="row justify-content-center mb-3">
+                <div class="col-12 col-lg-6 offset-lg-0 mb-3 mb-lg-0">
+                    <div class="card bg-dark text-white">
+                        <div class="card-body">
+                            <h3 class="card-title">::<b>open</b>:<code>sdn</code>:<b>file</b></h3>
+                            <form class="form" action="javascript:openSdn()">
+                                <div class="form-group">
+                                    <label for="ifm-lyrics">SDN file:</label>
+                                    <input class="form-control" id="sdn-file" type="file" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="ifm-lyrics"></label>
+                                    <button class="form-control btn btn-secondary">Open</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
                 <div class="col-12 col-lg-6 offset-lg-0">
                     <div class="card bg-dark text-white">
                         <div class="card-body">
+                            <h3 class="card-title">::<b>import</b>:<b>and-time</b>:<b>a-song</b></h3>
                             <form class="form" action="javascript:importSong()">
                                 <div class="form-group">
                                     <label for="ifm-title">Title:</label><input class="form-control" id="ifm-song" requried type="text" placeholder="whiskey my waifu..">
@@ -75,11 +88,12 @@
                                     <input class="form-control" id="ifm-file" type="file" required>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ifm-lyrics">Lyrics (each line in new line plz)<br>empty lines will get removed</label>
+                                    <label for="ifm-lyrics">Lyrics (each line in new line plz)<br>empty lines will get
+                                        removed</label>
                                     <textarea class="form-control" id="ifm-lyrics" type="text" required rows="5"></textarea>
                                 </div>
                                 <div class="form-group">
-                                    <label for="ifm-lyrics">Ready? Hit the meowgic button</label>
+                                    <label for="ifm-lyrics">Import and make the timings.</label>
                                     <button class="form-control btn btn-secondary">Import</button>
                                 </div>
                             </form>

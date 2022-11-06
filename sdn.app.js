@@ -10,6 +10,7 @@ const msc = document.getElementById("mode_sc");
 const mpb = document.getElementById("mode_pb");
 const lib = document.getElementById("lib");
 const edi = document.getElementById("edi");
+const urlArgs = new URLSearchParams(window.location.search);
 
 /* needed variables */
 var song, by, currentLine, lastLine, lyrics;
@@ -17,7 +18,10 @@ var syncMode = false;
 var libMode = false;
 var songLoaded = false;
 var track = document.getElementById("track");
-localStorage.setItem("volume", 0.15);
+if (!localStorage.getItem("volume")) {
+    console.log("Setting defualt volume")
+    localStorage.setItem("volume", 0.3);
+}
 
 /* opens and closes the song library */
 function songLib() {
@@ -36,7 +40,7 @@ function playSongByName(trigger) {
 }
 
 /* switch between playback and sync modes */
-async function modeSwitch(override) {
+function modeSwitch(override) {
     if (!songLoaded) return;
     if (!override && lock.checked) {
         alert("Mode is locked to prevent accidental switching.\r\nRemove mode lock and switch again.");
@@ -69,8 +73,12 @@ function createTrack(source) {
     track = document.createElement("audio");
     track.volume = localStorage.getItem("volume"); /* no earrapes */
     track.setAttribute("controls", "");
-    track.setAttribute("id", "track");
-    track.setAttribute("ontimeupdate", "updateTime()");
+    track.addEventListener('timeupdate', (event) => {
+        updateTime();
+    });
+    track.addEventListener('volumechange', (event) => {
+        localStorage.setItem("volume", event.target.volume);
+    });
     var b = document.createElement("source");
     b.setAttribute("src", source);
     b.setAttribute("type", "audio/mpeg");
@@ -87,6 +95,7 @@ function writeLine(id, txt) {
     container.appendChild(line);
 }
 
+/* removes the data of previously played song */
 function clearLyrics(song, by, promo) {
     currentLine = lastLine = -1;
     lyrics = [];
@@ -117,6 +126,7 @@ function displayLyrics(autoplay) {
     songLoaded = true;
 }
 
+/* accepts lyrics in json format */
 function parseJson(json) {
     clearLyrics(json.song, json.by, json.promo)
     Object.values(json.lyrics).forEach((line, value) => lyrics[value + 1] = [line[0],
@@ -224,6 +234,7 @@ function x(i) {
     }
 }
 
+/* rewind to a line */
 function e(i) {
     track.currentTime = lyrics[i.getAttribute("id")][1] + 0.15;
 }
@@ -232,7 +243,7 @@ function e(i) {
 function serializeLyrics() {
     let json = [];
     json.push('{', '"song":"', song, '","by":"', by, '","lyrics":', JSON.stringify(lyrics.slice(1)), '}');
-    return json.join("");
+    return new Blob(json, { type: "application/json" })
 }
 
 /* saves lyrics to a text file*/
@@ -240,40 +251,15 @@ function serializeJSON() {
     download(song.replaceAll(" ", "_").toLowerCase() + "_" + by.replaceAll(" ", "_").toLowerCase() + ".json", serializeLyrics())
 }
 
-/* download string as text file */
-function download(file, content) {
+/* download a blob */
+function download(file, blob) {
     var element = document.createElement('a');
-    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(content));
+    element.setAttribute('href', URL.createObjectURL(blob));
     element.setAttribute('download', file);
     element.style.display = 'none';
     document.body.appendChild(element);
     element.click();
     document.body.removeChild(element);
-}
-
-/* save URL to Local Storage using blob */
-function blobify(url, mime, name) {
-    var xhr = new XMLHttpRequest(),
-        blob, fileReader = new FileReader();
-    xhr.open("GET", url, true);
-    xhr.responseType = "arraybuffer";
-
-    xhr.addEventListener("load", function() {
-        if (xhr.status === 200) {
-            blob = new Blob([xhr.response], { type: mime });
-            fileReader.onload = function(evt) {
-                var result = evt.target.result;
-                loadSong();
-                try {
-                    localStorage.setItem(name, result);
-                } catch (e) {
-                    console.log("Storage failed: " + e);
-                }
-            };
-            fileReader.readAsDataURL(blob);
-        }
-    }, false);
-    xhr.send();
 }
 
 /* saves imported song to the library */
@@ -283,12 +269,13 @@ function saveSongToLS(file, id) {
     return data;
 }
 
+/* converts lyrics to JSON format for synchronization */
 function importLyrics(song, by, ptext) {
     clearLyrics(song, by, null)
     let lines = ptext.trim().split("\n")
     let counter = 0;
     for (let x = 0; x < lines.length; x++) {
-        let line = [lines[x].trim(), x * 5]
+        let line = [lines[x].trim(), Math.round(x * 100 / lines.length)]
         if (line[0].length > 0) {
             counter++;
             lyrics[counter] = line;
@@ -296,7 +283,7 @@ function importLyrics(song, by, ptext) {
     }
 }
 
-/* this is hard. its not that hard. */
+/* this was hard. before i met blob. */
 function importSong() {
     const musFile = document.getElementById("ifm-file").files[0];
     importLyrics(document.getElementById("ifm-song").value, document.getElementById("ifm-by").value, document.getElementById("ifm-lyrics").value);
@@ -306,9 +293,15 @@ function importSong() {
     modeSwitch(true);
 }
 
-/* greet endpoint if the script has loaded correctly */
-container.innerHTML += '<h2><em>application loaded successfully</em></h2>';
-container.innerHTML += '<h1 class="hl">no song selected</h1>';
-container.innerHTML += '<h1 class="hl">select a song from the library</h1>';
+/* autoplay the song from url params */
+if (urlArgs.get("ap")) {
+    loadSongOffURL(urlArgs.get("name"));
+} else {
+    /* or inform the endpoint that the script has loaded correctly */
+    container.innerHTML += '<h2><em>application loaded successfully</em></h2>';
+    container.innerHTML += '<h1 class="hl">no song selected</h1>';
+    container.innerHTML += '<h1 class="hl">select a song from the library</h1>';
+
+}
 
 /* EOF */
