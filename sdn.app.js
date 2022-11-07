@@ -11,6 +11,12 @@ const mpb = document.getElementById("mode_pb");
 const lib = document.getElementById("lib");
 const edi = document.getElementById("edi");
 const urlArgs = new URLSearchParams(window.location.search);
+const sseeker = document.getElementById("seeker");
+const svolume = document.getElementById("volume");
+const playb = document.getElementById("play");
+const ppos = document.getElementById("ppos");
+const pdur = document.getElementById("pdur");
+const loopb = document.getElementById("loop");
 
 /* needed variables */
 var song, by, currentLine, lastLine, lyrics;
@@ -18,9 +24,29 @@ var syncMode = false;
 var libMode = false;
 var songLoaded = false;
 var track = document.getElementById("track");
+
 if (!localStorage.getItem("volume")) {
     console.log("Setting defualt volume")
-    localStorage.setItem("volume", 0.3);
+    localStorage.setItem("volume", 0.3); /* no earrapes */
+} else {
+    updateVolume(localStorage.getItem("volume"));
+}
+
+sseeker.setAttribute("max", 7680);
+sseeker.addEventListener("input", function(event) {
+    track.currentTime = event.target.value * track.duration / 7680;
+});
+svolume.setAttribute("max", 1000);
+svolume.setAttribute("value", localStorage.getItem("volume") * 1000);
+svolume.addEventListener("input", function(event) {
+    updateVolume(event.target.value / 1000);
+});
+
+function updateVolume(vol) {
+    localStorage.setItem("volume", vol);
+    document.getElementById("l-volume").textContent = pad(Math.round(vol * 100), 3);
+    if (track)
+        track.volume = vol;
 }
 
 /* opens and closes the song library */
@@ -67,16 +93,35 @@ function modeSwitch(override) {
     }
 }
 
+function isLow(el) {
+    return el.classList.contains("low");
+}
+
+function setHi(el) {
+    el.classList.remove("low");
+    el.classList.add("high");
+}
+
+function setLow(el) {
+    el.classList.remove("high");
+    el.classList.add("low");
+}
+
 /* add the audio tag */
 function createTrack(source) {
     player.innerHTML = "";
     track = document.createElement("audio");
-    track.volume = localStorage.getItem("volume"); /* no earrapes */
+    track.volume = localStorage.getItem("volume");
+    if (!isLow(loopb))
+        track.setAttribute("loop", "")
     track.addEventListener('timeupdate', (event) => {
         updateTime();
     });
-    track.addEventListener('volumechange', (event) => {
-        localStorage.setItem("volume", event.target.volume);
+    track.addEventListener('play', function(event) {
+        setHi(playb);
+    });
+    track.addEventListener('pause', function(event) {
+        setLow(playb);
     });
     var b = document.createElement("source");
     b.setAttribute("src", source);
@@ -98,7 +143,7 @@ function writeLine(id, txt) {
 function clearLyrics(song, by, promo) {
     currentLine = lastLine = -1;
     lyrics = [];
-    lyrics[0] = ["::[music-start]", -0.15];
+    lyrics[0] = ["", 0];
     container.innerHTML = "";
     document.getElementById("song").classList.remove("yeet");
     document.getElementById("by").classList.remove("yeet");
@@ -121,7 +166,7 @@ function displayLyrics(autoplay) {
     }
     writeLine("nil", "endl");
     if (autoplay)
-        track.play()
+        togglePlay(true)
     songLoaded = true;
 }
 
@@ -145,16 +190,32 @@ function loadSongOffURL(id) {
     });
 }
 
+function pad(n, width) {
+    n = Math.round(n) + '';
+    return n.length >= width ? n : new Array(width - n.length + 1).join('0') + n;
+}
+
+function updateDuration(x, y) {
+
+}
+
 /* play the music and sync lyrics */
 function updateTime() {
+    sseeker.value = track.currentTime * 7680 / track.duration;
+    ppos.textContent = pad(track.currentTime / 60, 2) + ":" + pad(track.currentTime % 60, 2);
+    pdur.textContent = pad(track.duration / 60, 2) + ":" + pad(track.duration % 60, 2);
     if (syncMode) return;
     let line = currentLine;
+    while (line >= 0 && track.currentTime < lyrics[line][1]) {
+        line--;
+        console.log("-")
+    }
+
     while (line < lyrics.length - 1 && track.currentTime >= lyrics[line + 1][1]) {
         line++;
+        console.log("+")
     }
-    while (line <= lyrics.length - 1 && line > 0 && track.currentTime < lyrics[line][1]) {
-        line--;
-    }
+
     setLine(line)
 }
 
@@ -175,7 +236,7 @@ function resetTimings() {
     track.pause();
     track.currentTime = 0;
     setLine(0);
-    for (let x = 1; x < lyrics.length; x++) {
+    for (let x = 0; x < lyrics.length; x++) {
         lyrics[x][1] = 0;
         reloadLyrics(x);
     }
@@ -200,14 +261,15 @@ function setLine(line) {
 
 /* scroll a line into viewport */
 function scrollToLine(line) {
-    // document.getElementById(Math.max(0, line - 1)).scrollIntoView();
-    document.getElementById(line).scrollIntoView({ block: "center" });
+    if (line >= 0 && line < lyrics.length)
+        document.getElementById(line).scrollIntoView({ block: "center" });
 }
 
 /* highlight active lines */
 function updateLyricsDisplay() {
     let element;
     for (let x = lyrics.length - 1; x >= currentLine; x--) {
+        if (x < 0) continue;
         element = document.getElementById(x);
         element.removeAttribute("class");
         if (x == currentLine) {
@@ -236,20 +298,16 @@ function updateLyricsDisplay() {
 function x(i) {
     line = i.getAttribute("id");
     if (syncMode) {
-        if (line == 0) {
-            track.currentTime = 0;
-            track.play();
-        } else
-            syncLine(line);
+        syncLine(line);
     } else {
-        track.play();
+        togglePlay(true);
         track.currentTime = lyrics[line][1] + 0.15;
     }
 }
 
 /* rewind to a line */
 function e(i) {
-    track.currentTime = lyrics[i.getAttribute("id")][1] + 0.15;
+    track.currentTime = lyrics[i.getAttribute("id")][1];
 }
 
 /* serialize the lyrics into json format */
@@ -326,6 +384,27 @@ function openSdn() {
         songLib();
     }
     read.readAsText(json);
+}
+
+/* experimental toggle function */
+function togglePlay(force) {
+    playb.removeAttribute("disabled")
+    if (isLow(playb) || force) {
+        track.play()
+    } else {
+        track.pause()
+    }
+}
+
+function toggleLoop() {
+    console.log(loop)
+    if (isLow(loopb)) {
+        setHi(loopb)
+        track.setAttribute("loop", "")
+    } else {
+        setLow(loopb)
+        track.removeAttribute("loop")
+    }
 }
 
 /* autoplay the song from url params */

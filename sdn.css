@@ -145,8 +145,7 @@ h6 {
     margin: 0;
 }
 
-.mode-off,
-#player a {
+.mode-off {
     display: none;
 }
 
@@ -156,8 +155,7 @@ h6 {
 }
 
 #player {
-    width: 100%;
-    text-align: center;
+    display: none;
 }
 
 audio {
@@ -166,16 +164,6 @@ audio {
 
 .ptr {
     cursor: pointer;
-}
-
-.player-blk {
-    align-self: center;
-    flex: 1;
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    color: #ccc;
-    gap: 10px;
 }
 
 .modesw {
@@ -284,4 +272,63 @@ h1[id="0"] {
 
 .thicc {
     font-weight: bold;
+}
+
+.player {
+    height: 70px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column;
+}
+
+.player-top,
+.player-bottom {
+    color: #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.btnplay,
+.btnloop {
+    font-family: monospace;
+    padding: 0 2rem;
+    font-size: 1.25rem;
+    color: #eee;
+    background-color: #333;
+}
+
+.volume {
+    max-width: 10rem;
+}
+
+.btnplay.low::before {
+    content: "\23F5";
+}
+
+.btnplay.high::before {
+    content: "\23f8";
+}
+
+.btnloop::before {
+    content: "\1F502";
+}
+
+.btnloop.low {
+    background-color: #222;
+    color: darkred;
+}
+
+.btnloop.high {
+    background-color: #999;
+    color: green;
+}
+
+#l-volume::before {
+    content: '::vol:';
+}
+
+#l-volume::after {
+    content: '%';
 }

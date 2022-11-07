@@ -127,7 +127,7 @@
             </div>
         </div>
         <div class="row controls pt-2 pt-md-0">
-            <div class="col-6 col-lg-2 order-0 song align-self-center">
+            <div class="col-6 col-xl-2 order-0 song align-self-center">
                 <div class="modesw">
                     <div class="lock" title="Prevents accidental switching & loss of syncing work">
                         <label for="xlock" class="ptr">::mode:lock</label> <input class="form-check-input ptr" style="margin-top:0;" type="checkbox" id="xlock" checked>
@@ -142,12 +142,21 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 col-lg-8 order-3 order-lg-1 align-self-center">
-                <div id="player" class="d-flex">
-                    <a class="text-white" id="track">hola el cártel</a>
+            <div class="col-12 col-xl-8 order-3 order-xl-1 align-self-center">
+                <div class="player">
+                    <div class="player-top">
+                        <button class="btn btn-secondary btnloop low mx-1" id="loop" onclick="toggleLoop()" title="repeat"></button>
+                        <button class="btn btn-secondary btnplay low" id="play" onclick="togglePlay(false)" title="play / pause" disabled></button>
+                        <span id="l-volume"></span>
+                        <input type="range" class="form-range volume" id="volume">
+                    </div>
+                    <div class="player-bottom">
+                        <span id="ppos">00:00</span><input type="range" class="form-range" id="seeker" value="0"><span id="pdur">00:00</span>
+                    </div>
                 </div>
+                <div id="player"></div>
             </div>
-            <div class="col-6 col-lg-2 order-2 order-lg-2 song align-self-center">
+            <div class="col-6 col-xl-2 order-2 order-xl-2 song align-self-center">
                 <div class="modesw" id="lib">
                     <label>::library</label>
                     <h4 onclick="songLib()" class="ptr"><u>::<b>select</b>:<b>song</b></u></h4>
