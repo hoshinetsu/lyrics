@@ -363,6 +363,7 @@ function importSong() {
     displayLyrics(false);
     songLib();
     modeSwitch(true);
+    playb.removeAttribute("disabled");
 }
 
 /* open the sdn file */
