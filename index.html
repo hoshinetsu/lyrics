@@ -7,9 +7,9 @@
     <meta name="AdsBot-Google" content="noindex">
     <meta name="googlebot-news" content="noindex">
     <meta name="google" content="notranslate">
-    <meta name="description" content="SyncDeezNotes -test build. a very musical webapp. not as musical as tiktok before rebranding tho :kekw: // rawr at emchu uwu xd">
+    <meta name="description" content="Lyrics - A Spotify-like lyrics display and music player. All in browser!">
     <meta name="author" content="hoshinetsu">
-    <title>syncdeeznotes | hoshinetsu</title>
+    <title>lyrics | hoshinetsu</title>
     <link rel="Shortcut Icon" href="/favicon.ico">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -23,33 +23,24 @@
             <div class="row align-items-center frame-top sticky-top">
                 <h3 class="col-3 m-0">::<b>song</b>:<b>library</b>
                 </h3>
-                <button class="offset-7 offset-lg-8 col-2 col-lg-1 p-3 p-lg-1 py-lg-2 btn btn-danger norad thicc" title="close" onclick="songLib()"> X </button>
+                <button class="offset-7 offset-lg-8 col-2 col-lg-1 p-3 p-lg-1 py-lg-2 btn btn-danger norad thicc"
+                    title="close" onclick="songLib()"> X </button>
             </div>
         </div>
         <div class="container bg-b pt-1">
             <div class="row">
-                <h3>::<b>preloaded</b>:<b>d<abbr
-                            title="get the fuq away me busy cutting myself">emo</abbr></b>:<b>songs</b>
+                <h3>::<b>preloaded</b>:<b>demo</b>:<b>songs</b>
                 </h3>
             </div>
             <div class="row justify-content-center mb-3">
-                <div class="col-12 col-lg-3">
-                    <div class="card bg-dark text-white" style="width: 20rem;">
-                        <!-- <img class="card-img-top" src="..."> -->
-                        <div class="card-body">
-                            <h5 class="card-title">Pre-synced lyrics</h5>
-                            <p class="card-text mt-2">::song: <b>Kwiaty</b><br>::by: <b>La Venders</b></p>
-                            <button data-songname="szouda_kwiaty" onclick="playSongByName(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-12 pt-3 pt-lg-0 col-lg-3">
                     <div class="card bg-dark text-white" style="width: 25rem;">
                         <div class="card-body">
                             <h5 class="card-title">Pre-synced lyrics</h5>
                             <p class="card-text mt-2">::song: <b>The Dragon Hunters Song</b><br>::by: <b>The Cure</b>
                             </p>
-                            <button data-songname="the_dh_song" onclick="playSongByName(this)" class="btn btn-secondary mt-2 px-5">Play!</button>
+                            <button data-songname="dragonhunters" onclick="playSongByName(this)"
+                                class="btn btn-secondary mt-2 px-5">Play!</button>
                         </div>
                     </div>
                 </div>
@@ -68,7 +59,8 @@
                                     <label for="ifm-lyrics">JSON file:</label>
                                     <input class="form-control" id="o-json" type="file" required>
                                 </div>
-                                <div class="form-group d-flex align-items-center justify-content-center mt-2" style="gap:10px">
+                                <div class="form-group d-flex align-items-center justify-content-center mt-2"
+                                    style="gap:10px">
                                     <button class="btn btn-secondary" type="submit">Open</button>
                                     <button class=" btn btn-secondary" type="reset">Deselect</button>
                                 </div>
@@ -82,10 +74,12 @@
                             <h3 class="card-title">::<b>import</b>:<b>and-time</b>:<b>a-song</b></h3>
                             <form class="form" action="javascript:importSong()">
                                 <div class="form-group">
-                                    <label for="ifm-title">Title:</label><input class="form-control" id="ifm-song" requried type="text" placeholder="whiskey my waifu..">
+                                    <label for="ifm-title">Title:</label><input class="form-control" id="ifm-song"
+                                        requried type="text" placeholder="no i dont have a gun">
                                 </div>
                                 <div class="form-group">
-                                    <label for="ifm-by">Performers:</label><input class="form-control" id="ifm-by" required type="text" placeholder="daddy dream">
+                                    <label for="ifm-by">Performers:</label><input class="form-control" id="ifm-by"
+                                        required type="text" placeholder="kurt cobain">
                                 </div>
                                 <div class="form-group">
                                     <label for="ifm-lyrics">MP3 file:</label>
@@ -94,7 +88,8 @@
                                 <div class="form-group">
                                     <label for="ifm-lyrics">Lyrics (each line in new line plz)<br>empty lines will get
                                         removed</label>
-                                    <textarea class="form-control" id="ifm-lyrics" type="text" required rows="5"></textarea>
+                                    <textarea class="form-control" id="ifm-lyrics" type="text" required
+                                        rows="5"></textarea>
                                 </div>
                                 <div class="form-group">
                                     <label for="ifm-lyrics">Import and make the timings.</label>
@@ -114,7 +109,7 @@
                 <h5 id="by" class="yeet">::<b>by <a id="xby" class="hl" target="_blank"></a></b></h5>
             </div>
             <div class="col-12 col-md-6 text-lg-end song order-0 order-lg-1 align-self-center">
-                <h6>::app <b>syncdeeznotes</b> ver. 1.4.2.0-ALF</h6>
+                <h6>::app <b>lyrics</b> ver. 1.4.2.0-ALF</h6>
                 <h6>::dev <a href="https://hoshinetsu.moe" target="_blank"><b>@hoshinetsu</b></a>
                 </h6>
             </div>
@@ -130,7 +125,8 @@
             <div class="col-6 col-xl-2 order-0 song align-self-center">
                 <div class="modesw">
                     <div class="lock" title="Prevents accidental switching & loss of syncing work">
-                        <label for="xlock" class="ptr">::mode:lock</label> <input class="form-check-input ptr" style="margin-top:0;" type="checkbox" id="xlock" checked>
+                        <label for="xlock" class="ptr">::mode:lock</label> <input class="form-check-input ptr"
+                            style="margin-top:0;" type="checkbox" id="xlock" checked>
                     </div>
                     <div id="mode_pb">
                         <h4 onclick="modeSwitch(false)" class="ptr" title="Switch to sync mode">
@@ -145,13 +141,16 @@
             <div class="col-12 col-xl-8 order-3 order-xl-1 align-self-center">
                 <div class="player">
                     <div class="player-top">
-                        <button class="btn btn-secondary btnloop low mx-1" id="loop" onclick="toggleLoop()" title="repeat"></button>
-                        <button class="btn btn-secondary btnplay low" id="play" onclick="togglePlay(false)" title="play / pause" disabled></button>
+                        <button class="btn btn-secondary btnloop low mx-1" id="loop" onclick="toggleLoop()"
+                            title="repeat"></button>
+                        <button class="btn btn-secondary btnplay low" id="play" onclick="togglePlay(false)"
+                            title="play / pause" disabled></button>
                         <span id="l-volume"></span>
                         <input type="range" class="form-range volume" id="volume">
                     </div>
                     <div class="player-bottom">
-                        <span id="ppos">00:00</span><input type="range" class="form-range" id="seeker" value="0"><span id="pdur">00:00</span>
+                        <span id="ppos">00:00</span><input type="range" class="form-range" id="seeker" value="0"><span
+                            id="pdur">00:00</span>
                     </div>
                 </div>
                 <div id="player"></div>
@@ -164,7 +163,8 @@
                 <div class="modesw mode-off" id="edi">
                     <label>::editor</label>
                     <div class="flx">
-                        <a href="javascript:serializeJSON()" title="Save lyrics as .json">::<b>save</b>:<b>lyrics</b></a>
+                        <a href="javascript:serializeJSON()"
+                            title="Save lyrics as .json">::<b>save</b>:<b>lyrics</b></a>
                         <a href="javascript:resetTimings()" title="Reset timings">::<b>reset</b>:<b>timings</b></a>
                     </div>
                 </div>
